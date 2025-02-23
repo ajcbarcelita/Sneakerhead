@@ -1,5 +1,4 @@
 /* Profile_Page Styles */
-
 header {
     display: flex;
     justify-content: space-between;
@@ -119,6 +118,11 @@ input[type="checkbox"] {
     margin-left: 62px;
     margin-top: 25px;
     font-family: 'Inter', bold;
+
+    /* Scrollbar for Order History */
+    max-height: 707px;  
+    overflow-y: auto;  
+    overflow-x: hidden;
 }
 
 .profile-container h2 {
@@ -226,4 +230,32 @@ input[type="checkbox"] {
     background: #355516;
 }
 
-/* ORDER HISTORY */
+/* ORDER HISTORY STYLES*/
+.order-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 15px;
+}
+
+.order-details p {
+    font-size: 16px;
+    color: #2b2a2a;
+}
+
+.promo-code {
+    font-style: italic;
+    color: #555;
+}
+
+.status {
+    font-weight: bold;
+    color: #426B1F;
+}
+
+.order-meta {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+}
