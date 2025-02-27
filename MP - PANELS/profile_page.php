@@ -16,28 +16,28 @@ $orders = [
         "brand" => "Nike, Adidas, Puma",
         "promo_code" => "2025PROMO",
         "status" => "Delivered",
-        "amount" => 14.95,
+        "amount" => 5500.00,
         "order_date" => "2025-02-08"
     ],
     [
         "brand" => "Nike, Adidas",
         "promo_code" => null, // No promo used
         "status" => "Pending",
-        "amount" => 12.50,
+        "amount" => 3300.00,
         "order_date" => "2025-02-07"
     ],
     [
         "brand" => "Puma, Reebok",
         "promo_code" => "FREESHIP",
         "status" => "Shipped",
-        "amount" => 20.00,
+        "amount" => 2500.00,
         "order_date" => "2025-02-06"
     ],
     [
         "brand" => "Puma, Nike, Adidas",
         "promo_code" => null,
         "status" => "Shipped",
-        "amount" => 2000.00,
+        "amount" => 8000.00,
         "order_date" => "2025-02-07"
     ]
 ];
@@ -204,28 +204,28 @@ $orders = [
                 <hr>
                 <?php foreach ($orders as $order) : ?>
                     <div class="order-card">
-                        <div class="order-details">
-                            <p><strong><?php echo $order["brand"]; ?></strong></p>
-                            <p class="promo-code">
-                                <?php
-                                if ($order["promo_code"]) {
-                                    echo "'{$order["promo_code"]}' Promo Code Used";
-                                } else {
-                                    echo "No Promo Code Used";
-                                }
-                                ?>
-                            </p>
-                            <p><strong>Status:</strong> <span class="status"><?php echo strtoupper($order["status"]); ?></span></p>
+                        <div class="order-header">
+                            <p class="order-brand"><strong><?php echo $order["brand"]; ?></strong></p>
+                            <p class="order-price"><strong>₱<?php echo number_format($order["amount"], 2); ?></strong></p>
                         </div>
+                        <p class="promo-code">
+                            <?php
+                            if ($order["promo_code"]) 
+                                echo "'{$order["promo_code"]}' Promo Code Used";
+                             else 
+                                echo "No Promo Code Used";
+                            ?>
+                        </p>
                         <div class="order-meta">
-                            <p><strong>$<?php echo number_format($order["amount"], 2); ?></strong></p>
-                            <p><?php echo date("d.m.Y", strtotime($order["order_date"])); ?></p>
+                            <span class="status"><?php echo strtoupper($order["status"]); ?></span>
+                            <p class="order-date"><?php echo date("d.m.Y", strtotime($order["order_date"])); ?></p>
                         </div>
                     </div>
                     <hr>
                 <?php endforeach; ?>
             </div>
         </div>
+
     </div>
 
     <script>
