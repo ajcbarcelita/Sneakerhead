@@ -62,7 +62,7 @@ $orders = [
         <nav>
             <a href="index.php">Home</a>
             <a href="shop.php">Shop</a>
-            <a href="checkout.php">Check Out</a>
+            <a href="Checkout.php">Check Out</a>
             <button class="sign-out">Sign Out</button>
         </nav>
     </header>

@@ -18,7 +18,7 @@ $_SESSION['cart'] = [
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Form validation logic 
+    // Form validation logic remains the same...
     if (empty($errors)) {
         $_SESSION['cart'] = [];
         header("Location: order-success.php");
@@ -75,7 +75,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .complete-order-btn:hover {
             background-color: #3F6C0F;
         }
-        
     </style>
 </head>
 <body style="background-color: #f3f4f6; margin: 0; font-family: Arial, sans-serif;">
@@ -84,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
             <h1 style="margin: 0; color: #4D7C0F;">SNEAKERHEADS</h1>
             <nav>
-                <a href="#" style="margin-right: 16px; color: #4B5563; text-decoration: none;">Home</a>
+                <a href="index.php" style="margin-right: 16px; color: #4B5563; text-decoration: none;">Home</a>
                 <a href="#" style="margin-right: 16px; color: #4B5563; text-decoration: none;">Shop</a>
                 <a href="#" style="margin-right: 16px; color: #4B5563; text-decoration: none;">Check Out</a>
                 <a href="#" style="padding: 8px 16px; background-color: #4D7C0F; color: white; text-decoration: none; border-radius: 4px;">Sign out</a>
@@ -189,18 +188,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $subtotal += $item['price'] * $item['quantity'];
                 ?>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                    <div style="display: flex; align-items: center;">
-                        <div style="width: 64px; height: 64px; background-color: #f3f4f6; margin-right: 16px;">
-                            <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" 
-                                style="width: 100%; height: 100%; object-fit: cover;">
+                        <div style="display: flex; align-items: center;">
+                            <div style="width: 64px; height: 64px; background-color: #f3f4f6; margin-right: 16px;"></div>
+                            <div>
+                                <h3 style="margin: 0; font-size: 16px;"><?php echo htmlspecialchars($item['name']); ?></h3>
+                                <p style="margin: 4px 0; color: #6B7280;">Quantity: <?php echo $item['quantity']; ?></p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 style="margin: 0; font-size: 16px;"><?php echo htmlspecialchars($item['name']); ?></h3>
-                            <p style="margin: 4px 0; color: #6B7280;">Quantity: <?php echo $item['quantity']; ?></p>
-                        </div>
+                        <p style="margin: 0; font-weight: bold;">₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
                     </div>
-                    <p style="margin: 0; font-weight: bold;">₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
-                </div>
                 <?php endforeach; ?>
 
                 <div style="border-top: 1px solid #e5e7eb; margin-top: 16px; padding-top: 16px;">
