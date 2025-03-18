@@ -1,0 +1,46 @@
+/*
+        Login Process Flow (PHP + MySQL + jQuery)
+
+        1. User accesses login.php.
+        - The page contains a login form requiring a username/email and password.
+        - The user enters their credentials.
+
+        2. jQuery captures form data and sends an AJAX request.
+        - The form submission is intercepted using jQuery.
+        - Data is sent via a POST request to login-signup-handler.php.
+        - The page does not reload, improving user experience.
+
+        3. PHP processes the login request in login-signup-handler.php.
+        - Receives the POST request.
+        - Sanitizes input to prevent SQL injection and XSS attacks.
+        - Checks if the username or email exists in the database.
+
+        4. If the user exists:
+        - Retrieves the hashed password from the database.
+        - Compares it with the entered password using password_verify().
+
+        5. If the password is correct:
+        - Starts a session and stores user information (user_id, username).
+        - Regenerates the session ID for security.
+        - Returns a success response, redirecting the user to dashboard.php.
+
+        6. If the username/email does not exist or the password is incorrect:
+        - Returns an error message.
+        - The error message is displayed in login.php using jQuery.
+
+        7. Protecting logged-in pages (e.g., dashboard.php):
+        - Pages requiring authentication check for an active session.
+        - If no session exists, the user is redirected back to login.php.
+
+        8. Logout process:
+        - When the user clicks "Logout," logout.php is triggered.
+        - The session is destroyed using session_destroy().
+        - The user is redirected back to login.php.
+
+        Security Features:
+        - Uses prepared statements to prevent SQL injection.
+        - Sanitizes input with htmlspecialchars() to prevent XSS.
+        - Uses password_verify() to securely compare passwords.
+        - Session regeneration is implemented to prevent session fixation.
+        - AJAX is used to provide a smoother login experience.
+    */

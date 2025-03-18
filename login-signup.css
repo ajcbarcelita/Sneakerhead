@@ -1,0 +1,108 @@
+/* Reset default margins and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&family=Newsreader:wght@500&display=swap');
+
+/* Centering the login container */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: white;
+    flex-direction: column;
+}
+
+/* Login box container */
+.login-container {
+    text-align: center;
+}
+
+/* Styling the logo (H1) */
+h1, h2, h3 {
+    font-family: 'Newsreader', serif;
+    margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 50px;
+    font-weight: 500;
+    color: #426B1F; /* Green shade from the image */
+    letter-spacing: 2px;
+}
+
+/* Remove default link styles for the logo link */
+a.logo-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.input-field, .login-button, .signup-text, .signup-link {
+    font-family: 'Inter', sans-serif;
+}
+
+h2 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-top: 15px;
+}
+
+h3 {
+    font-size: 22px;
+    font-weight: 500;
+    margin-top: 10px;
+    color: #333; /* Slightly darker for contrast */
+}
+
+/* Input fields */
+.input-field {
+    width: 300px;
+    padding: 12px;
+    margin: 20px 10px 0;
+    border: 1px solid #999;
+    border-radius: 4px;
+    font-size: 16px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Login button */
+.login-button {
+    width: 300px;
+    padding: 12px;
+    background-color: #4d6820; /* Green color from image */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.login-button:hover {
+    background-color: #4a5a2f;
+}
+
+/* Sign-up text */
+.signup-text {
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+/* Sign-up link */
+.signup-link {
+    color: #0066ff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-link:hover {
+    text-decoration: underline;
+}
