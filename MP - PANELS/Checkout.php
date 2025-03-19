@@ -18,7 +18,7 @@ $_SESSION['cart'] = [
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Form validation logic remains the same...
+    // Form validation logic 
     if (empty($errors)) {
         $_SESSION['cart'] = [];
         header("Location: order-success.php");
@@ -34,6 +34,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - SneakerHead</title>
     <style>
+
+        body {
+            background-color: #f3f4f6; 
+            margin: 0; 
+            font-family: Arial, sans-serif;
+        }
+        
+        /* For the Header Styles */
+        header {
+            background-color: white; 
+            padding: 16px; 
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .header-container {
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+
+        .site-title {
+            margin: 0; 
+            color: #426b1f;
+            font-family: Newsreader;
+            font-size: xx-large;
+        }
+
+        .nav-link {
+            margin-right: 16px; 
+            color: #4B5563; 
+            text-decoration: none;
+        }
+
+        .log-out-btn {
+            padding: 8px 16px; 
+            background-color: #4D7C0F; 
+            color: white; 
+            text-decoration: none; 
+            border-radius: 4px;
+        }
+        
+        /*For the Layout Styles */
+        .main-container {
+            max-width: 1200px; 
+            margin: 32px auto; 
+            padding: 0 16px;
+        }
+        .page-title {
+            font-size: 32px; 
+            margin-bottom: 32px;
+        }
+        .checkout-grid {
+            display: grid; 
+            grid-template-columns: 2fr 1fr; 
+            gap: 32px;
+        }
+        
+        /* Section Styles */
+        .checkout-section {
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 20px; 
+            margin-bottom: 16px;
+        }
+        
+        /* Form Styles */
         .radio-button {
             display: inline-flex;
             align-items: center;
@@ -44,9 +113,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             cursor: pointer;
             margin-right: 8px;
         }
+
         .radio-button input[type="radio"] {
             margin-right: 8px;
         }
+
+        .radio-button-full {
+            width: 100%; 
+            box-sizing: border-box;
+        }
+
         .form-input {
             width: 100%;
             padding: 8px;
@@ -54,6 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 4px;
             margin-bottom: 12px;
         }
+
         .form-select {
             width: 100%;
             padding: 8px;
@@ -62,6 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 12px;
             background-color: white;
         }
+
         .complete-order-btn {
             width: 100%;
             padding: 12px;
@@ -71,46 +149,135 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
+            margin-top: 24px;
         }
+
         .complete-order-btn:hover {
             background-color: #3F6C0F;
         }
+        
+        .checkbox-label {
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 12px;
+        }
+
+        .checkbox {
+            margin-right: 8px;
+        }
+
+        .form-grid {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 12px;
+        }
+
+        .textarea {
+            height: 100px; 
+            resize: vertical;
+        }
+        
+        /* Order Summary Styles */
+        .order-summary {
+            background-color: white; 
+            padding: 24px; 
+            border-radius: 8px;
+        }
+
+        .product-item {
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 16px;
+        }
+
+        .product-details {
+            display: flex; 
+            align-items: center;
+        }
+
+        .product-image-container {
+            width: 64px; 
+            height: 64px; 
+            background-color: #f3f4f6; 
+            margin-right: 16px;
+        }
+
+        .product-image {
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover;
+        }
+
+        .product-name {
+            margin: 0; 
+            font-size: 16px;
+        }
+
+        .product-quantity {
+            margin: 4px 0; 
+            color: #6B7280;
+        }
+
+        .product-price {
+            margin: 0; 
+            font-weight: bold;
+        }
+
+        .order-summary-divider {
+            border-top: 1px solid #e5e7eb; 
+            margin-top: 16px; 
+            padding-top: 16px;
+        }
+
+        .summary-row {
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 8px;
+        }
+
+        .total-row {
+            display: flex; 
+            justify-content: space-between; 
+            margin-top: 16px; 
+            font-weight: bold; 
+            font-size: 18px;
+        }
     </style>
 </head>
-<body style="background-color: #f3f4f6; margin: 0; font-family: Arial, sans-serif;">
+<body>
     <!-- Header -->
-    <header style="background-color: white; padding: 16px; border-bottom: 1px solid #e5e7eb;">
-        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="margin: 0; color: #4D7C0F;">SNEAKERHEADS</h1>
+    <header>
+        <div class="header-container">
+            <h1 class="site-title">SNEAKERHEADS</h1>
             <nav>
-                <a href="index.php" style="margin-right: 16px; color: #4B5563; text-decoration: none;">Home</a>
-                <a href="#" style="margin-right: 16px; color: #4B5563; text-decoration: none;">Shop</a>
-                <a href="#" style="margin-right: 16px; color: #4B5563; text-decoration: none;">Check Out</a>
-                <a href="#" style="padding: 8px 16px; background-color: #4D7C0F; color: white; text-decoration: none; border-radius: 4px;">Sign out</a>
+                <a href="#" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Shop</a>
+                <a href="#" class="nav-link">Check Out</a>
+                <a href="#" class="log-out-btn">Log out</a>
             </nav>
         </div>
     </header>
 
-    <div style="max-width: 1200px; margin: 32px auto; padding: 0 16px;">
-        <h1 style="font-size: 32px; margin-bottom: 32px;">Check out</h1>
+    <div class="main-container">
+        <h1 class="page-title">Check out</h1>
         
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 32px;">
+        <div class="checkout-grid">
             <!-- Left Column -->
             <div>
                 <!-- Contact Section -->
-                <div style="margin-bottom: 24px;">
-                    <h2 style="font-size: 20px; margin-bottom: 16px;">Contact</h2>
+                <div class="checkout-section">
+                    <h2 class="section-title">Contact</h2>
                     <input type="email" placeholder="Email Address" class="form-input">
-                    <label style="display: flex; align-items: center; margin-bottom: 12px;">
-                        <input type="checkbox" style="margin-right: 8px;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="checkbox">
                         Email me with news and offers
                     </label>
                     <input type="tel" placeholder="Mobile Number" class="form-input">
                 </div>
 
                 <!-- Billing Address -->
-                <div style="margin-bottom: 24px;">
-                    <h2 style="font-size: 20px; margin-bottom: 16px;">Billing Address</h2>
+                <div class="checkout-section">
+                    <h2 class="section-title">Billing Address</h2>
                     <div class="radio-button">
                         <input type="radio" name="billing" checked>
                         <span>Same as shipping address</span>
@@ -122,9 +289,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <!-- Delivery -->
-                <div style="margin-bottom: 24px;">
-                    <h2 style="font-size: 20px; margin-bottom: 16px;">Delivery</h2>
-                    <div style="margin-bottom: 16px;">
+                <div class="checkout-section">
+                    <h2 class="section-title">Delivery</h2>
+                    <div class="checkout-section">
                         <div class="radio-button">
                             <input type="radio" name="delivery" checked>
                             <span>Ship/Deliver</span>
@@ -139,7 +306,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option>Philippines</option>
                     </select>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-grid">
                         <input type="text" placeholder="First Name (Optional)" class="form-input">
                         <input type="text" placeholder="Last Name" class="form-input">
                     </div>
@@ -147,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" placeholder="Address" class="form-input">
                     <input type="text" placeholder="Apartment, Suite, etc. (Optional)" class="form-input">
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-grid">
                         <input type="text" placeholder="Postal Code" class="form-input">
                         <input type="text" placeholder="City" class="form-input">
                     </div>
@@ -156,23 +323,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option>Metro Manila</option>
                     </select>
 
-                    <label style="display: flex; align-items: center; margin-bottom: 12px;">
-                        <input type="checkbox" style="margin-right: 8px;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" class="checkbox">
                         Save this information for next time
                     </label>
 
-                    <textarea placeholder="Instructions/Notes (Optional)" class="form-input" style="height: 100px; resize: vertical;"></textarea>
+                    <textarea placeholder="Instructions/Notes (Optional)" class="form-input textarea"></textarea>
                 </div>
 
                 <!-- Payment -->
-                <div style="margin-bottom: 24px;">
-                    <h2 style="font-size: 20px; margin-bottom: 16px;">Payment</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div class="radio-button" style="width: 100%; box-sizing: border-box;">
+                <div class="checkout-section">
+                    <h2 class="section-title">Payment</h2>
+                    <div class="form-grid">
+                        <div class="radio-button radio-button-full">
                             <input type="radio" name="payment" checked>
                             <span>Bank Deposit</span>
                         </div>
-                        <div class="radio-button" style="width: 100%; box-sizing: border-box;">
+                        <div class="radio-button radio-button-full">
                             <input type="radio" name="payment">
                             <span>GCash</span>
                         </div>
@@ -181,44 +348,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <!-- Right Column - Order Summary -->
-            <div style="background-color: white; padding: 24px; border-radius: 8px;">
-                <h2 style="font-size: 20px; margin-bottom: 16px;">Order Summary</h2>
+            <div class="order-summary">
+                <h2 class="section-title">Order Summary</h2>
                 
                 <?php foreach ($_SESSION['cart'] as $item): 
                     $subtotal += $item['price'] * $item['quantity'];
                 ?>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-                        <div style="display: flex; align-items: center;">
-                            <div style="width: 64px; height: 64px; background-color: #f3f4f6; margin-right: 16px;"></div>
-                            <div>
-                                <h3 style="margin: 0; font-size: 16px;"><?php echo htmlspecialchars($item['name']); ?></h3>
-                                <p style="margin: 4px 0; color: #6B7280;">Quantity: <?php echo $item['quantity']; ?></p>
-                            </div>
+                    <div class="product-item">
+                    <div class="product-details">
+                        <div class="product-image-container">
+                            <img src="<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['name']); ?>" 
+                                class="product-image">
                         </div>
-                        <p style="margin: 0; font-weight: bold;">₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
+                        <div>
+                            <h3 class="product-name"><?php echo htmlspecialchars($item['name']); ?></h3>
+                            <p class="product-quantity">Quantity: <?php echo $item['quantity']; ?></p>
+                        </div>
                     </div>
+                    <p class="product-price">₱<?php echo number_format($item['price'] * $item['quantity'], 2); ?></p>
+                </div>
                 <?php endforeach; ?>
 
-                <div style="border-top: 1px solid #e5e7eb; margin-top: 16px; padding-top: 16px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <div class="order-summary-divider">
+                    <div class="summary-row">
                         <span>Subtotal</span>
                         <span>₱<?php echo number_format($subtotal, 2); ?></span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <div class="summary-row">
                         <span>Shipping</span>
                         <span>₱<?php echo number_format($shipping, 2); ?></span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 16px; font-weight: bold; font-size: 18px;">
+                    <div class="total-row">
                         <span>TOTAL</span>
                         <span>₱<?php echo number_format($subtotal + $shipping, 2); ?></span>
                     </div>
                 </div>
 
-                <button type="submit" class="complete-order-btn" style="margin-top: 24px;">
+                <button type="submit" class="complete-order-btn">
                     Complete Order
                 </button>
             </div>
         </div>
     </div>
 </body>
-</html>
+</html></div>
