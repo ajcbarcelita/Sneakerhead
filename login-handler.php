@@ -1,6 +1,12 @@
 <?php
+    // Set secure session cookie parameters 
+    ini_set('session.cookie_lifetime', 0); // Session cookie will expire when the browser is closed
+    ini_set('session.cookie_httponly', 1); // Prevent JavaScript access to session cookie
+    ini_set('session.cookie_secure', 1); // Ensure the session cookie is sent over HTTPS
+    ini_set('session.use_strict_mode', 1); // Use strict mode to prevent session fixation
+
     session_start();
-    require "db_connection.php";
+    require "db_credentials.php";
     
     //Doing non-AJAX way first
     /*
@@ -40,6 +46,13 @@
     }
 
     // fucking login logic (non-AJAX)
+    $conn = new mysqli($servername, $username, $db_pw, $db_name);
+    
+    // Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $id = sanitizeUserInput($_POST["id"]);
         $password = sanitizeUserInput($_POST["password"]);
@@ -49,15 +62,17 @@
             header("Location: login.php?error=Please fill in all required fields.");
             exit();
         }
-
+        
         // Check if id entered is an email; if T, it is an email; otherwise, treat as a username
-        if(isEmail($id)) {
+        if(isEmail($id) == true) {
             $user = getUserByEmail($conn, $id);
         } else {
             $user = getUserByUsername($conn, $id);
         }
 
-        if ($user && password_verify($password, $user["password"])) {
+    
+        
+        if ($user != null && password_verify($password, $user["pw_hash"])) {
             // Set session variables
             $_SESSION["id"] = $user["id"];
             $_SESSION["username"] = $user["username"];
@@ -66,9 +81,10 @@
             session_regenerate_id(); // Regenerate session id to prevent session fixation attacks
 
             // put logic here to check roles if either user or admin and redirect accordingly
+            //SECOND FLAG FOR CHECKING WHY THE LOGIN FOR USERS IS NOT WORKING
             switch($_SESSION["role_id"]) {
                 case "1": // Admin
-                    header("Location: admin.php");
+                    header("Location: server_product.php");
                     break;
                 case "2": // User
                     header("Location: index.php");
