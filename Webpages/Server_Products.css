@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background-color: white;
+    border-bottom: 2px solid #ddd;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+nav a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.sign-in {
+    background-color: green;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.admin-panel {
+    padding: 20px;
+}
+
+.form-container {
+    background: lightgray;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the input fields */
+}
+
+form input {
+    display: block;
+    width: 70%; /* Changed from 100% to 50% */
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    background: green;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.product {
+    display: inline-block;
+    text-align: center;
+}
+
+.product img {
+    width: 150px;
+    height: auto;
+}
+
+.product form {
+    margin-top: 5px;
+}

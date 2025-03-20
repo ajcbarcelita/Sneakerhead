@@ -2,7 +2,10 @@
 require 'db_conn.php';
 
 $sneakers = [];
-$sql = "SELECT s.name, s.brand, si.file_path AS image FROM shoes s JOIN shoe_images si ON s.id = si.shoe_id";
+$sql = "SELECT s.name, s.brand, si.file_path AS image 
+        FROM shoes s 
+        JOIN shoe_images si ON s.id = si.shoe_id 
+        WHERE s.is_deleted = 0"; // Added condition to exclude deleted shoes
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
