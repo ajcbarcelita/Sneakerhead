@@ -1,5 +1,5 @@
 <?php
-require 'database_conn.php';
+require 'db_conn.php';
 
 $sneakers = [];
 $sql = "SELECT s.name, s.brand, si.file_path AS image FROM shoes s JOIN shoe_images si ON s.id = si.shoe_id";
