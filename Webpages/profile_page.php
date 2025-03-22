@@ -1,42 +1,44 @@
 <?php
 
-$row = [
-    "Name" => "Enzo",
+$profile = [
+    "First" => "Enzo",
+    "Last" => "Ewan ko",
+    "Contactno" => "0999929192",
     "Email" => "josh@gmail.com",
     "Password" => "1212313",
     "Address" => "1234 Street",
     "Province" => "Silang",
     "City" => "Cavite",
-    "Postal" => "1001"
+    "Username" => "AKALAKSLAK"
 ];
 
 // TESTING PURPOSES
 $orders = [
     [
-        "brand" => "Nike, Adidas, Puma",
+        "brandname" => "Nike - FORCE AIR, ADIDAS - CROCS, YEEZY - BOOSTER",
         "promo_code" => "2025PROMO",
-        "status" => "Delivered",
+        "address" => "1234 StreASDASDASDASDASDASDASDASDASDASXet",
         "amount" => 5500.00,
         "order_date" => "2025-02-08"
     ],
     [
-        "brand" => "Nike, Adidas",
+        "brandname" => "Nike, Adidas",
         "promo_code" => null, // No promo used
-        "status" => "Pending",
+        "address" => "1234 StreetASDADSASDADSA",
         "amount" => 3300.00,
         "order_date" => "2025-02-07"
     ],
     [
-        "brand" => "Puma, Reebok",
+        "brandname" => "Puma, Reebok",
         "promo_code" => "FREESHIP",
-        "status" => "Shipped",
+        "address" => "1234 Street BALIKBAYAN",
         "amount" => 2500.00,
         "order_date" => "2025-02-06"
     ],
     [
-        "brand" => "Puma, Nike, Adidas",
+        "brandname" => "Puma, Nike, Adidas",
         "promo_code" => null,
-        "status" => "Shipped",
+        "address" => "1234 Street",
         "amount" => 8000.00,
         "order_date" => "2025-02-07"
     ]
@@ -80,68 +82,153 @@ $orders = [
         </div>
     </div>
 
-    <!-- DB -->
-
+    <!-- QUERY TO UPDATE PROFILE & SEE ORDER HISTORY -->
     <?php
-    /*
-    include 'db_connection.php';
+    //include 'database_conn.php';
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
-        $name = $_POST['name'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $address = $_POST['address'];
-        $province = $_POST['province'];
-        $city = $_POST['city'];
-        $postal = $_POST['postal'];
+    // SELECT QUERY FOR PROFILE DETAILS
+    // $sql = "SELECT username, fname, lname, phone_no, email, pw_hash, address_line, province, city_municipality
+    //             FROM users
+    //             WHERE id = ? AND is_deleted = 0";
 
-        $update = "UPDATE tblstudent SET Name='$name', Email='$email', Password='$password', Address='$address', Province='$province', City='$city', Postal='$postal' WHERE ID='$userId'";
+    // $stmt = $conn->prepare($sql);
+    // $stmt->bind_param("i", $id);
+    // $stmt->execute();
+    // $result = $stmt->get_result();
+    // $profile = $result->fetch_assoc();
 
-        if (mysqli_query($conn, $update)) {
-            echo "Record updated successfully";
-            header("Location: profile_page.php"); // Redirect to the same page to see the updated details
-            exit();
-        } else {
-            echo "Error updating record: " . mysqli_error($conn);
-        }
-    }
+    // $stmt->close();
 
-    $conn->close();
-    */
+    // POST METHOD FOR UPDATING PROFILE DETAILS
+    // if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
+    //     $username = $_POST['username'];
+    //     $fname = $_POST['fname'];
+    //     $lname = $_POST['lname'];
+    //     $phone_no = $_POST['phone_no'];
+    //     $email = $_POST['email'];
+    //     $pw_hash = $_POST['pw_hash'];
+    //     $address_line = $_POST['address_line'];
+    //     $province = $_POST['province'];
+    //     $city_municipality = $_POST['city_municipality'];
+
+    //     $sql = "UPDATE users 
+    //             SET username = ?, fname = ?, lname = ?, phone_no = ?, email = ?, pw_hash = ?, address_line = ?, province = ?, city_municipality = ? 
+    //             WHERE id = ? AND is_deleted = 0";
+
+    //     $stmt = $conn->prepare($sql);
+    //     $stmt->bind_param("sssisssssi", $username, $fname, $lname, $phone_no, $email, $pw_hash, $address_line, $province, $city_municipality, $id);
+
+    //     if ($stmt->execute()) {
+    //         echo "Record updated successfully";
+    //         header("refresh:2; url=profile_page.php");
+    //     } else {
+    //         echo "Error updating record: " . $stmt->error;
+    //     }
+    //     $stmt->close();
+    // }
+
+
+    // SELECT QUERY FOR ORDER HISTORY
+    // $sql = "SELECT 
+    //              o.order_id,
+    //              GROUP_CONCAT(DISTINCT CONCAT(s.brand, ' - ', s.name) ORDER BY s.brand, s.name ASC) AS brand_name,
+    //              o.total_price,
+    //              p.promo_code,
+    //              o.created_at AS order_date,
+    //              u.address_line
+    //        FROM orders o
+    //        LEFT JOIN promo_codes p ON o.promo_code = p.promo_code_id
+    //        JOIN order_items oi ON o.order_id = oi.order_id
+    //        JOIN shoe_size_inventory ssi ON oi.shoe_size = ssi.shoe_us_size   // specific shoe size instead of shoe_id
+    //        JOIN shoes s ON ssi.shoe_id = s.id
+    //        JOIN users u ON o.user_id = u.id
+    //        WHERE o.user_id = ? 
+    //        GROUP BY o.order_id, o.created_at";
+
+    // $order_stmt = $conn->prepare($sql);
+    // $order_stmt->bind_param("i", $id);
+    // $order_stmt->execute();
+    // $order_result = $order_stmt->get_result();  
+    // $orders = $order_result->fetch_all(MYSQLI_ASSOC);  
+
+    // INPUT DATA INTO $orders ARRAY
+    // $orders = [];
+    // while ($row = $order_result->fetch_assoc()) 
+    //     $orders[] = $row;
+
+    // $order_stmt->close();
+
+    // $conn->close();
     ?>
 
     <div id="content">
         <!-- Profile Details -->
         <div id="profile-details">
-            <form>
+            <form method="post" action="profile_page.php">
                 <div class="profile-container">
                     <h2>Edit Profile Details <span>SAVE TO EDIT</span></h2>
                     <hr>
+
                     <div class="text-form">
-                        <label for="full-name">Full Name:</label>
+                        <label for="username">Username:</label>
                         <div class="input-container">
-                            <input type="text" id="full-name" placeholder="Enter New Full Name">
-                            <span class="curr-value" data-original="<?php echo $row['Name']; ?>">**********</span>
-                            <input type="checkbox" id="toggle-name" class="toggle">
-                            <label for="toggle-name" class="eye-icon"></label>
+                            <input type="text" name="username" placeholder="Enter New Username" required>
+                            <span class="curr-value" data-original="<?php echo $profile['Username']; ?>">**********</span>
+                            <input type="checkbox" id="toggle-username" class="toggle">
+                            <label for="toggle-username" class="eye-icon"></label>
                         </div>
                     </div>
 
-                    <div class="text-form">
-                        <label for="email-address">Email Address:</label>
-                        <div class="input-container">
-                            <input type="text" id="email-address" placeholder="Enter New Email Address">
-                            <span class="curr-value" data-original="<?php echo $row['Email']; ?>">**********</span>
-                            <input type="checkbox" id="toggle-email" class="toggle">
-                            <label for="toggle-email" class="eye-icon"></label>
+                    <div class="grid-container">
+                        <div class="text-form">
+                            <label for="first-name">First Name:</label>
+                            <div class="input-container">
+                                <input type="text" name="full-name" placeholder="Enter New Full Name" required>
+                                <span class="curr-value" data-original="<?php echo $profile['First']; ?>">**********</span>
+                                <input type="checkbox" id="toggle-first" class="toggle">
+                                <label for="toggle-first" class="eye-icon"></label>
+                            </div>
                         </div>
+
+                        <div class="text-form">
+                            <label for="last-name">Last Name:</label>
+                            <div class="input-container">
+                                <input type="text" name="last-name" placeholder="Enter New Last Name" required>
+                                <span class="curr-value" data-original="<?php echo $profile['Last']; ?>">**********</span>
+                                <input type="checkbox" id="toggle-last" class="toggle">
+                                <label for="toggle-last" class="eye-icon"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-container">
+                        <div class="text-form">
+                            <label for="contact-no">Contact Number: </label>
+                            <div class="input-container">
+                                <input type="text" name="contact-no" placeholder="Enter New Contact Number" required>
+                                <span class="curr-value" data-original="<?php echo $profile['Contactno']; ?>">**********</span>
+                                <input type="checkbox" id="toggle-contact" class="toggle">
+                                <label for="toggle-contact" class="eye-icon"></label>
+                            </div>
+                        </div>
+
+                        <div class="text-form">
+                            <label for="email-address">Email Address:</label>
+                            <div class="input-container">
+                                <input type="text" name="email-address" placeholder="Enter New Email Address" required>
+                                <span class="curr-value" data-original="<?php echo $profile['Email']; ?>">**********</span>
+                                <input type="checkbox" id="toggle-email" class="toggle">
+                                <label for="toggle-email" class="eye-icon"></label>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="text-form">
                         <label for="password">Password:</label>
                         <div class="input-container">
-                            <input type="password" id="password" placeholder="Enter New Password">
-                            <span class="curr-value" data-original="<?php echo $row['Password']; ?>">**********</span>
+                            <input type="password" name="password" placeholder="Enter New Password" required>
+                            <span class="curr-value" data-original="<?php echo $profile['Password']; ?>">**********</span>
                             <input type="checkbox" id="toggle-password" class="toggle">
                             <label for="toggle-password" class="eye-icon"></label>
 
@@ -151,48 +238,38 @@ $orders = [
                     <div class="text-form">
                         <label for="address-line">Address Line:</label>
                         <div class="input-container">
-                            <input type="text" id="address-line" placeholder="Enter New Address Line">
-                            <span class="curr-value" data-original="<?php echo $row['Address']; ?>">**********</span>
+                            <input type="text" name="address-line" placeholder="Enter New Address Line" required>
+                            <span class="curr-value" data-original="<?php echo $profile['Address']; ?>">**********</span>
                             <input type="checkbox" id="toggle-address" class="toggle">
                             <label for="toggle-address" class="eye-icon"></label>
                         </div>
                     </div>
 
                     <!-- Province & City -->
-                    <div class="province-city-container">
+                    <div class="grid-container">
                         <div class="text-form">
-                            <label>Province:</label>
+                            <label for="province">Province:</label>
                             <div class="input-container">
-                                <input type="text" placeholder="Enter New Province">
-                                <span class="curr-value" data-original="<?php echo $row['Province']; ?>">**********</span>
+                                <input type="text" name="province" placeholder="Enter New Province" required>
+                                <span class="curr-value" data-original="<?php echo $profile['Province']; ?>">**********</span>
                                 <input type="checkbox" id="toggle-province" class="toggle">
                                 <label for="toggle-province" class="eye-icon"></label>
                             </div>
                         </div>
 
                         <div class="text-form">
-                            <label>City:</label>
+                            <label for="city">City/Municipality:</label>
                             <div class="input-container">
-                                <input type="text" placeholder="Enter New City">
-                                <span class="curr-value" data-original="<?php echo $row['City']; ?>">**********</span>
+                                <input type="text" name="city_municipality" placeholder="Enter New City" required>
+                                <span class="curr-value" data-original="<?php echo $profile['City']; ?>">**********</span>
                                 <input type="checkbox" id="toggle-city" class="toggle">
                                 <label for="toggle-city" class="eye-icon"></label>
                             </div>
                         </div>
                     </div>
 
-                    <div class="text-form">
-                        <label for="postal-code">Postal Code:</label>
-                        <div class="input-container">
-                            <input type="text" id="postal-code" placeholder="Enter New Postal Code">
-                            <span class="curr-value" data-original="<?php echo $row['Postal']; ?>">**********</span>
-                            <input type="checkbox" id="toggle-postal" class="toggle">
-                            <label for="toggle-postal" class="eye-icon"></label>
-                        </div>
-                    </div>
-
                     <!-- Save -->
-                    <button class="save" value="Save Changes">Save</button>
+                    <button class="save" type="submit" name="update" value="Save Changes">Save</button>
                 </div>
             </form>
         </div>
@@ -205,19 +282,19 @@ $orders = [
                 <?php foreach ($orders as $order) : ?>
                     <div class="order-card">
                         <div class="order-header">
-                            <p class="order-brand"><strong><?php echo $order["brand"]; ?></strong></p>
-                            <p class="order-price"><strong>₱<?php echo number_format($order["amount"], 2); ?></strong></p>
+                            <p class="order-brand"><strong><?php echo $order["brand_name"]; ?></strong></p>
+                            <p class="order-price"><strong>₱<?php echo number_format($order["total_price"], 2); ?></strong></p>
                         </div>
                         <p class="promo-code">
                             <?php
-                            if ($order["promo_code"]) 
+                            if ($order["promo_code"])
                                 echo "'{$order["promo_code"]}' Promo Code Used";
-                             else 
+                            else
                                 echo "No Promo Code Used";
                             ?>
                         </p>
                         <div class="order-meta">
-                            <span class="status"><?php echo strtoupper($order["status"]); ?></span>
+                            <span class="status"><?php echo $order["address_line"]; ?></span>
                             <p class="order-date"><?php echo date("d.m.Y", strtotime($order["order_date"])); ?></p>
                         </div>
                     </div>
