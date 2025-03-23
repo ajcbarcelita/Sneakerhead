@@ -50,7 +50,7 @@ $result = $conn->query($sql);
                     <div class="product">
                         <img src="<?= $row['shoe_image'] ?>" alt="<?= $row['shoe_name'] ?>">
                         <p><?= $row['shoe_name'] ?></p>
-                        <form action="delete_product.php" method="post"> <!-- Updated action -->
+                        <form action="BackEnd/delete_product.php" method="post"> <!-- Updated action -->
                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
                             <button type="submit">Delete</button>
                         </form>

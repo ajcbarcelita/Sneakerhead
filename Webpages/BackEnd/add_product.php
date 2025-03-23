@@ -1,5 +1,5 @@
 <?php
-require 'database_conn.php';
+require '../db_conn.php'; // Updated file path
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $shoe_name = $_POST['shoe_name'];

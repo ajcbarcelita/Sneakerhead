@@ -1,5 +1,5 @@
 <?php
-require 'database_conn.php';
+require '../db_conn.php'; // Updated file path
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = $_POST['id'];
@@ -18,6 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn->close();
-header("Location: Server_Products.php");
+header("Location: ../Server_Products.php"); // Updated file path
 exit();
 ?>
