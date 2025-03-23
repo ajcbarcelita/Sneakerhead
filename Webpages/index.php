@@ -2,7 +2,7 @@
 require 'db_conn.php';
 
 $sneakers = [];
-$sql = "SELECT s.name, s.brand, si.file_path AS image 
+$sql = "SELECT s.id, s.name, s.brand, si.file_path AS image 
         FROM shoes s 
         JOIN shoe_images si ON s.id = si.shoe_id 
         WHERE s.is_deleted = 0"; // Added condition to exclude deleted shoes
@@ -70,7 +70,7 @@ $selected_brand = $_GET['brand'] ?? '';
         <?php foreach ($sneakers as $sneaker) : ?>
             <?php if ($selected_brand === '' || $sneaker['brand'] === $selected_brand) : ?>
                 <div class="product">
-                    <a href="product.php?name=<?php echo urlencode($sneaker['name']); ?>">
+                    <a href="product.php?id=<?php echo $sneaker['id']; ?>">
                         <img src="<?php echo $sneaker['image']; ?>" alt="<?php echo $sneaker['name']; ?>"> <!-- Updated file path -->
                     </a>
                     <p><?php echo $sneaker['name']; ?></p>
