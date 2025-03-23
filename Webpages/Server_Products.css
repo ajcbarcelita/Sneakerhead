@@ -65,17 +65,24 @@ button {
 }
 
 .grid {
-    display: table;
+    display: flex;
+    flex-wrap: wrap;
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse;
 }
 
 .product {
-    display: table-cell;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Align content to the bottom */
+    align-items: center; /* Center align items */
     text-align: center;
     vertical-align: top;
     padding: 10px;
+    margin: 10px;
+    flex: 1 1 calc(20% - 20px); /* Force 5 products per row */
+    box-sizing: border-box;
     width: 20%; /* 5 columns */
     border: none; /* Hide table lines */
 }
@@ -86,7 +93,15 @@ button {
 }
 
 .product form {
-    margin-top: 5px;
+    margin-top: auto; /* Push the button to the bottom */
+}
+
+.product p {
+    text-align: center; /* Align labels to center */
+}
+
+.product.empty {
+    visibility: hidden; /* Hide empty product divs */
 }
 
 .form-container select {
@@ -137,9 +152,9 @@ button {
 }
 
 .product-image {
-    width: 100%; /* Make image take full width of the product container */
-    height: auto;
-    object-fit: cover;
+    width: 150px; /* Set desired width */
+    height: 150px; /* Set desired height */
+    object-fit: cover; /* Ensure the image covers the area without distortion */
 }
 
 .filter-container {
