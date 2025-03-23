@@ -152,8 +152,8 @@ input[type="checkbox"] {
     margin-bottom: 5px;
 }
 
-/* Group Province & City */
-.province-city-container {
+/* Group Grid */
+.grid-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
@@ -222,7 +222,7 @@ input[type="checkbox"] {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 20px;
+    margin-top: 1px;
     transition: background 0.3s;
 }
 

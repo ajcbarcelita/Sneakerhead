@@ -63,21 +63,22 @@
 
     // POST METHOD FOR UPDATING PROFILE DETAILS
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
-        $username = $_POST['username'];
-        $fname = $_POST['fname'];
-        $lname = $_POST['lname'];
-        $phone_no = $_POST['phone_no'];
-        $email = $_POST['email'];
-        $address_line = $_POST['address_line'];
-        $province = $_POST['province'];
-        $city_municipality = $_POST['city_municipality'];
+
+        // Check if each field is empty, if so, keep the original value
+        $username = empty($_POST['username']) ? $profile['username'] : $_POST['username'];
+        $fname = empty($_POST['fname']) ? $profile['fname'] : $_POST['fname'];
+        $lname = empty($_POST['lname']) ? $profile['lname'] : $_POST['lname'];
+        $phone_no = empty($_POST['phone_no']) ? $profile['phone_no'] : $_POST['phone_no'];
+        $email = empty($_POST['email']) ? $profile['email'] : $_POST['email'];
+        $address_line = empty($_POST['address_line']) ? $profile['address_line'] : $_POST['address_line'];
+        $province = empty($_POST['province']) ? $profile['province'] : $_POST['province'];
+        $city_municipality = empty($_POST['city_municipality']) ? $profile['city_municipality'] : $_POST['city_municipality'];
 
         $new_password = $_POST['pw_hash'];
-        if (empty($new_password)) 
+        if (empty($new_password))
             $pw_hash = $profile['pw_hash'];
-         else 
+        else
             $pw_hash = password_hash($new_password, PASSWORD_DEFAULT);
-        
 
         $sql = "UPDATE users 
                 SET username = ?, fname = ?, lname = ?, phone_no = ?, email = ?, pw_hash = ?, address_line = ?, province = ?, city_municipality = ? 
@@ -138,7 +139,7 @@
                     <div class="text-form">
                         <label for="username">Username:</label>
                         <div class="input-container">
-                            <input type="text" name="username" placeholder="Enter New Username" required>
+                            <input type="text" name="username" placeholder="Enter New Username">
                             <span class="curr-value" data-original="<?php echo $profile['username']; ?>">**********</span>
                             <input type="checkbox" id="toggle-username" class="toggle">
                             <label for="toggle-username" class="eye-icon"></label>
@@ -149,7 +150,7 @@
                         <div class="text-form">
                             <label for="fname">First Name:</label>
                             <div class="input-container">
-                                <input type="text" name="fname" placeholder="Enter New Full Name" required>
+                                <input type="text" name="fname" placeholder="Enter New Full Name">
                                 <span class="curr-value" data-original="<?php echo $profile['fname']; ?>">**********</span>
                                 <input type="checkbox" id="toggle-first" class="toggle">
                                 <label for="toggle-first" class="eye-icon"></label>
@@ -159,7 +160,7 @@
                         <div class="text-form">
                             <label for="lname">Last Name:</label>
                             <div class="input-container">
-                                <input type="text" name="lname" placeholder="Enter New Last Name" required>
+                                <input type="text" name="lname" placeholder="Enter New Last Name">
                                 <span class="curr-value" data-original="<?php echo $profile['lname']; ?>">**********</span>
                                 <input type="checkbox" id="toggle-last" class="toggle">
                                 <label for="toggle-last" class="eye-icon"></label>
@@ -171,7 +172,7 @@
                         <div class="text-form">
                             <label for="phone_no">Contact Number: </label>
                             <div class="input-container">
-                                <input type="text" name="phone_no" placeholder="Enter New Contact Number" required>
+                                <input type="text" name="phone_no" placeholder="Enter New Contact Number">
                                 <span class="curr-value" data-original="<?php echo $profile['phone_no']; ?>">**********</span>
                                 <input type="checkbox" id="toggle-contact" class="toggle">
                                 <label for="toggle-contact" class="eye-icon"></label>
@@ -181,7 +182,7 @@
                         <div class="text-form">
                             <label for="email">Email Address:</label>
                             <div class="input-container">
-                                <input type="text" name="email" placeholder="Enter New Email Address" required>
+                                <input type="text" name="email" placeholder="Enter New Email Address">
                                 <span class="curr-value" data-original="<?php echo $profile['email']; ?>">**********</span>
                                 <input type="checkbox" id="toggle-email" class="toggle">
                                 <label for="toggle-email" class="eye-icon"></label>
@@ -192,7 +193,7 @@
                     <div class="text-form">
                         <label for="pw_hash">Password:</label>
                         <div class="input-container">
-                            <input type="password" name="pw_hash" placeholder="Enter New Password. Leave blank to keep the same.">
+                            <input type="password" name="pw_hash" placeholder="Enter New Password.">
                             <span class="curr-value" data-original="<?php echo $profile['pw_hash']; ?>">**********</span>
                             <input type="checkbox" id="toggle-password" class="toggle">
                             <label for="toggle-password" class="eye-icon"></label>
@@ -203,7 +204,7 @@
                     <div class="text-form">
                         <label for="address_line">Address Line:</label>
                         <div class="input-container">
-                            <input type="text" name="address_line" placeholder="Enter New Address Line" required>
+                            <input type="text" name="address_line" placeholder="Enter New Address Line">
                             <span class="curr-value" data-original="<?php echo $profile['address_line']; ?>">**********</span>
                             <input type="checkbox" id="toggle-address" class="toggle">
                             <label for="toggle-address" class="eye-icon"></label>
@@ -215,7 +216,7 @@
                         <div class="text-form">
                             <label for="province">Province:</label>
                             <div class="input-container">
-                                <input type="text" name="province" placeholder="Enter New Province" required>
+                                <input type="text" name="province" placeholder="Enter New Province">
                                 <span class="curr-value" data-original="<?php echo $profile['province']; ?>">**********</span>
                                 <input type="checkbox" id="toggle-province" class="toggle">
                                 <label for="toggle-province" class="eye-icon"></label>
@@ -225,7 +226,7 @@
                         <div class="text-form">
                             <label for="city_municipality">City/Municipality:</label>
                             <div class="input-container">
-                                <input type="text" name="city_municipality" placeholder="Enter New City" required>
+                                <input type="text" name="city_municipality" placeholder="Enter New City">
                                 <span class="curr-value" data-original="<?php echo $profile['city_municipality']; ?>">**********</span>
                                 <input type="checkbox" id="toggle-city" class="toggle">
                                 <label for="toggle-city" class="eye-icon"></label>
