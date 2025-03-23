@@ -405,6 +405,7 @@ INSERT INTO `sneakerhead`.`shoe_images` (`shoe_id`, `image_name`, `file_path`) V
 (5, 'kobe6.jpg', 'images/kobe6.jpg'),
 (6, 'samba.jpg', 'images/samba.jpg');
 SHOW WARNINGS;
+
 USE `sneakerhead` ;
 
 -- -----------------------------------------------------

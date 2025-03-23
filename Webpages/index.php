@@ -71,7 +71,7 @@ $selected_brand = $_GET['brand'] ?? '';
             <?php if ($selected_brand === '' || $sneaker['brand'] === $selected_brand) : ?>
                 <div class="product">
                     <a href="product.php?name=<?php echo urlencode($sneaker['name']); ?>">
-                        <img src="<?php echo $sneaker['image']; ?>" alt="<?php echo $sneaker['name']; ?>">
+                        <img src="<?php echo $sneaker['image']; ?>" alt="<?php echo $sneaker['name']; ?>"> <!-- Updated file path -->
                     </a>
                     <p><?php echo $sneaker['name']; ?></p>
                     <p><strong>Brand:</strong> <?php echo $sneaker['brand']; ?></p>

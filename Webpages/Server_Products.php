@@ -2,11 +2,26 @@
 require "db_conn.php";
 
 // Fetch products from the database
-$sql = "SELECT s.id, s.name AS shoe_name, s.brand AS brand_name, si.file_path AS shoe_image 
+$sql = "SELECT s.id, s.name AS shoe_name, s.brand AS brand_name, si.file_path AS shoe_image, s.is_deleted 
         FROM shoes s 
-        JOIN shoe_images si ON s.id = si.shoe_id 
-        WHERE s.is_deleted = 0"; // Added condition to exclude deleted shoes
+        JOIN shoe_images si ON s.id = si.shoe_id";
 $result = $conn->query($sql);
+
+// Fetch shoe sizes from the database
+$size_sql = "SELECT shoe_size FROM ref_us_sizes";
+$size_result = $conn->query($size_sql);
+$sizes = [];
+while ($size_row = $size_result->fetch_assoc()) {
+    $sizes[] = $size_row['shoe_size'];
+}
+
+// Fetch distinct brands from the database
+$brand_sql = "SELECT DISTINCT brand FROM shoes";
+$brand_result = $conn->query($brand_sql);
+$brands = [];
+while ($brand_row = $brand_result->fetch_assoc()) {
+    $brands[] = $brand_row['brand'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -32,27 +47,88 @@ $result = $conn->query($sql);
     <section class="admin-panel">
         <div class="form-container">
             <h2>ADD PRODUCT</h2>
-            <form action="add_product.php" method="post" enctype="multipart/form-data">
-                <input type="text" name="shoe_name" placeholder="Shoe Name" required>
-                <input type="text" name="brand_name" placeholder="Brand Name" required>
-                <input type="number" step="0.1" name="shoe_size" placeholder="Shoe Size" required> <!-- Changed to accept float values -->
-                <input type="number" name="shoe_count" placeholder="Shoe Count" required>
-                <input type="number" step="0.01" name="price" placeholder="Price(₱)" required> <!-- Added price input -->
-                <input type="file" name="shoe_image" accept=".jpeg" required> <!-- Changed to accept only JPEG files -->
+            <form action="BackEnd/add_product.php" method="post" enctype="multipart/form-data"> <!-- Updated action -->
+                <div class="input-group">
+                    <label for="shoe_name">Shoe Name:</label>
+                    <input type="text" name="shoe_name" placeholder="Shoe Name" required>
+                </div>
+                <div class="input-group">
+                    <label for="brand_name">Brand Name:</label>
+                    <input type="text" name="brand_name" placeholder="Brand Name" required>
+                </div>
+                <div class="input-group">
+                    <label for="shoe_size">Shoe Size:</label>
+                    <select name="shoe_size" required class="full-width">
+                        <?php foreach ($sizes as $size): ?>
+                            <option value="<?= $size ?>"><?= $size ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="shoe_count">Shoe Count:</label>
+                    <input type="number" name="shoe_count" placeholder="Shoe Count" required>
+                </div>
+                <div class="input-group">
+                    <label for="price">Price(₱):</label>
+                    <input type="number" step="0.01" name="price" placeholder="Price(₱)" required>
+                </div>
+                <div class="input-group">
+                    <label for="shoe_image">Shoe Image:</label>
+                    <input type="file" name="shoe_image" accept=".jpeg,.jpg" required> <!-- Allow .jpg files -->
+                </div>
                 <button type="submit">Add</button>
             </form>
         </div>
 
         <div class="product-list">
             <h2>DELETE PRODUCT</h2>
+            <div class="filter-container">
+                <form method="get" action="">
+                    <div class="filter-group">
+                        <label for="brand_filter">Filter by Brand:</label>
+                        <select name="brand_filter" id="brand_filter" onchange="this.form.submit()">
+                            <option value="">All Brands</option>
+                            <?php foreach ($brands as $brand): ?>
+                                <option value="<?= $brand ?>" <?= isset($_GET['brand_filter']) && $_GET['brand_filter'] == $brand ? 'selected' : '' ?>><?= $brand ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="deleted_filter">Show Deleted:</label>
+                        <select name="deleted_filter" id="deleted_filter" onchange="this.form.submit()">
+                            <option value="">All</option>
+                            <option value="1" <?= isset($_GET['deleted_filter']) && $_GET['deleted_filter'] == '1' ? 'selected' : '' ?>>Yes</option>
+                            <option value="0" <?= isset($_GET['deleted_filter']) && $_GET['deleted_filter'] == '0' ? 'selected' : '' ?>>No</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
             <div class="grid">
-                <?php while ($row = $result->fetch_assoc()): ?>
+                <?php
+                $brand_filter = isset($_GET['brand_filter']) ? $_GET['brand_filter'] : '';
+                $deleted_filter = isset($_GET['deleted_filter']) ? $_GET['deleted_filter'] : '';
+                $sql = "SELECT s.id, s.name AS shoe_name, s.brand AS brand_name, si.file_path AS shoe_image, s.is_deleted 
+                        FROM shoes s 
+                        JOIN shoe_images si ON s.id = si.shoe_id";
+                $conditions = [];
+                if ($brand_filter) {
+                    $conditions[] = "s.brand = '$brand_filter'";
+                }
+                if ($deleted_filter !== '') {
+                    $conditions[] = "s.is_deleted = $deleted_filter";
+                }
+                if ($conditions) {
+                    $sql .= " WHERE " . implode(' AND ', $conditions);
+                }
+                $result = $conn->query($sql);
+
+                while ($row = $result->fetch_assoc()): ?>
                     <div class="product">
-                        <img src="<?= $row['shoe_image'] ?>" alt="<?= $row['shoe_name'] ?>">
+                        <img src="<?= $row['shoe_image'] ?>" class="product-image <?= $row['is_deleted'] ? 'greyscale' : '' ?>" alt="<?= $row['shoe_name'] ?>">
                         <p><?= $row['shoe_name'] ?></p>
-                        <form action="BackEnd/delete_product.php" method="post"> <!-- Updated action -->
+                        <form action="BackEnd/<?= $row['is_deleted'] ? 'restore_product.php' : 'delete_product.php' ?>" method="post">
                             <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                            <button type="submit">Delete</button>
+                            <button type="submit"><?= $row['is_deleted'] ? 'Restore' : 'Delete' ?></button>
                         </form>
                     </div>
                 <?php endwhile; ?>
@@ -61,14 +137,39 @@ $result = $conn->query($sql);
 
         <div class="form-container">
             <h2>UPDATE PRODUCT</h2>
-            <form action="update_product.php" method="post" enctype="multipart/form-data">
-                <input type="number" name="id" placeholder="Product ID" required>
-                <input type="text" name="shoe_name" placeholder="Shoe Name">
-                <input type="text" name="brand_name" placeholder="Brand Name">
-                <input type="number" step="0.1" name="shoe_size" placeholder="Shoe Size"> <!-- Changed to accept float values -->
-                <input type="number" name="shoe_count" placeholder="Shoe Count">
-                <input type="number" step="0.01" name="price" placeholder="Price(₱)"> <!-- Added price input -->
-                <input type="file" name="shoe_image" accept=".jpeg"> <!-- Changed to accept only JPEG files -->
+            <form action="BackEnd/update_product.php" method="post" enctype="multipart/form-data"> <!-- Updated action -->
+                <div class="input-group">
+                    <label for="id">Product ID:</label>
+                    <input type="number" name="id" placeholder="Product ID" required>
+                </div>
+                <div class="input-group">
+                    <label for="shoe_name">Shoe Name:</label>
+                    <input type="text" name="shoe_name" placeholder="Shoe Name">
+                </div>
+                <div class="input-group">
+                    <label for="brand_name">Brand Name:</label>
+                    <input type="text" name="brand_name" placeholder="Brand Name">
+                </div>
+                <div class="input-group">
+                    <label for="shoe_size">Shoe Size:</label>
+                    <select name="shoe_size" class="full-width">
+                        <?php foreach ($sizes as $size): ?>
+                            <option value="<?= $size ?>"><?= $size ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="shoe_count">Shoe Count:</label>
+                    <input type="number" name="shoe_count" placeholder="Shoe Count">
+                </div>
+                <div class="input-group">
+                    <label for="price">Price(₱):</label>
+                    <input type="number" step="0.01" name="price" placeholder="Price(₱)">
+                </div>
+                <div class="input-group">
+                    <label for="shoe_image">Shoe Image:</label>
+                    <input type="file" name="shoe_image" accept=".jpeg,.jpg"> <!-- Allow .jpg files -->
+                </div>
                 <button type="submit">Update</button>
             </form>
         </div>
