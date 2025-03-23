@@ -23,11 +23,15 @@ DROP TABLE IF EXISTS `sneakerhead`.`ref_roles` ;
 
 SHOW WARNINGS;
 CREATE TABLE IF NOT EXISTS `sneakerhead`.`ref_roles` (
-  `role_id` INT UNSIGNED NOT NULL,
+  `role_id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `role_name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`role_id`))
 ENGINE = InnoDB;
-
+SHOW WARNINGS;
+USE sneakerhead;
+INSERT INTO `sneakerhead`.`ref_roles` (`role_id`, `role_name`) VALUES
+(1, 'Administrator'),
+(2, 'User');
 SHOW WARNINGS;
 
 -- -----------------------------------------------------
@@ -40,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `sneakerhead`.`users` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `username` VARCHAR(255) NOT NULL,
   `email` VARCHAR(45) NOT NULL,
-  `phone_no` INT NOT NULL,
+  `phone_no` VARCHAR(25) NOT NULL,
   `pw_hash` VARCHAR(255) NOT NULL,
   `role_id` INT UNSIGNED NOT NULL,
   `lname` VARCHAR(100) NOT NULL,
@@ -49,8 +53,8 @@ CREATE TABLE IF NOT EXISTS `sneakerhead`.`users` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `address_line` VARCHAR(255) NOT NULL,
-  `province` VARCHAR(45) NOT NULL,
   `city_municipality` VARCHAR(45) NOT NULL,
+  `province` VARCHAR(45) NOT NULL,
   `is_deleted` TINYINT(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   CONSTRAINT `fk_ref_roles_user`
@@ -76,6 +80,14 @@ SHOW WARNINGS;
 CREATE INDEX `fk_ref_roles_user_idx` ON `sneakerhead`.`users` (`role_id` ASC);
 
 SHOW WARNINGS;
+INSERT INTO `sneakerhead`.`users` (`username`, `email`, `phone_no`, `pw_hash`, `role_id`, `lname`, `fname`, `mname`,`created_at`, `updated_at`, `address_line`, `city_municipality`, `province`) VALUES
+('sneaker_admin1', 'aaron_barcelita@dlsu.edu.ph', '09174567890', '$2y$10$uO0nwaKWRYJ3iwek5/pUY.vRAiK4i0r5GJnHeVHm30CwIPEyFknvK', 1, 'Barcelita', 'Aaron John', 'Chucas', DEFAULT, DEFAULT, 'Brgy. Santiago', 'General Trias', 'Cavite'),
+('sneaker_admin2', 'john_mendoza@dlsu.edu.ph', '09982345678', '$2y$10$vXH5hAqX3w05LcT3ayZHweQsBAkU8lIOq0JEf3PAsWBriMBhS6c2y', 1, 'Mendoza', 'John Kirbie', 'Garcia', DEFAULT, DEFAULT, 'Arnaiz Ave.', 'Pasay City', 'Metro Manila'),
+('rgcaimoy', 'riane_caimoy@dlsu.edu.ph', '09567891234', '$2y$10$gPhGV1Kq0lKbnmAekofaTu7GGFvz24Se9hrO.65eJS3lcCTkbBJjG', 2, 'Caimoy', 'Riane George', 'Recto', DEFAULT, DEFAULT, 'Rizal St.', 'Calamba', 'Laguna'),
+('ramagbitang', 'roel_magbitang@dlsu.edu.ph', '09153456789', '$2y$10$KKYBGESF674Z.AuYEdOCyuDH5eZX/QpG/aabOSjgeTB5PFFt5WF1O', 2, 'Magbitang', 'Roel Andre', 'Santos', DEFAULT, DEFAULT, 'Mabini Ave.', 'Dasmarinas', 'Cavite'),
+('jecariaga', 'josh_cariaga@dlsu.edu.ph', '09325678901', '$2y$10$DfeDix3VapncHWuVsF9.2e7WnzsU/seQc5eJ2VzQJJzs5EFtDnMJG', 2, 'Cariaga', 'Josh Enrico', 'Pesigan', DEFAULT, DEFAULT, 'Aguinaldo Hwy.', 'Binan', 'Laguna'),
+('ajcbarcelita', 'ajcbarcelita@gmail.com', '09455034508', '$2y$10$9OHw82sztwtX46FaD3N7w.zQjmm2qPqIFFRtUgculySovF11sK2gO', 2, 'Barcelita', 'Aaron John', 'Chucas', DEFAULT, DEFAULT, 'Brgy. Santiago', 'General Trias', 'Cavite'),
+('jkmendoza', 'john_kirbie_mendoza@dlsu.edu.ph', '09456466978', '$2y$10$xBXl5awgfUnwtYFOmKu70.KNxsMarS6sg.8CrcbuaZee/881zF4q.', 2, 'Mendoza', 'John Kirbie', 'Garcia', DEFAULT, DEFAULT, 'Arnaiz Ave.', 'Pasay City', 'Metro Manila');
 
 -- -----------------------------------------------------
 -- Table `sneakerhead`.`shoes`
@@ -98,14 +110,13 @@ SHOW WARNINGS;
 CREATE UNIQUE INDEX `name_UNIQUE` ON `sneakerhead`.`shoes` (`name` ASC) ;
 
 SHOW WARNINGS;
-
 INSERT INTO `sneakerhead`.`shoes` (`name`, `brand`, `price`) VALUES
-('Nike Air Force 1', 'Nike', 90.00),
-('Nike Dunk Low', 'Nike', 100.00),
-('Air Jordan 1 Low', 'Jordan', 110.00),
-('Adidas Ultraboost Light', 'Adidas', 180.00),
-('Kobe 6 Proto \'Grinch\'', 'Nike', 220.00),
-('Adidas OG Samba', 'Adidas', 80.00);
+('Air Force 1', 'Nike', 7395.00),
+('Dunk Low', 'Nike', 7395.00),
+('Jordan 1 Low', 'Jordan', 6395.00),
+('Ultraboost Light', 'Adidas', 11000.00),
+('Kobe 6 Proto Grinch', 'Nike', 8795.00),
+('OG Samba', 'Adidas', 6800.00);
 
 
 -- -----------------------------------------------------
@@ -122,6 +133,17 @@ ENGINE = InnoDB;
 SHOW WARNINGS;
 CREATE UNIQUE INDEX `shoe_size_UNIQUE` ON `sneakerhead`.`ref_us_sizes` (`shoe_size` ASC) ;
 
+SHOW WARNINGS;
+INSERT INTO `sneakerhead`.`ref_us_sizes` (`shoe_size`) VALUES
+(7),
+(7.5),
+(8),
+(8.5),
+(9),
+(9.5),
+(10),
+(10.5),
+(11);
 SHOW WARNINGS;
 
 -- -----------------------------------------------------
@@ -151,6 +173,13 @@ SHOW WARNINGS;
 CREATE INDEX `fk_ref_us_sizes_idx` ON `sneakerhead`.`shoe_size_inventory` (`shoe_us_size` ASC) ;
 
 SHOW WARNINGS;
+INSERT INTO `shoe_size_inventory` (`shoe_id`, `shoe_us_size`, `stock`) VALUES
+(1, 8.0, 10), (1, 9.0, 15), (1, 10.0, 12), -- Air Force 1 (Nike)
+(2, 7.5, 8), (2, 8.5, 12), (2, 9.5, 14), -- Dunk Low (Nike)
+(3, 9.0, 10), (3, 10.0, 8), (3, 11.0, 6), -- Jordan 1 Low (Jordan)
+(4, 8.5, 20), (4, 9.5, 18), (4, 10.5, 15), (4, 11.0, 12), -- Ultraboost Light (Adidas)
+(5, 8.0, 7), (5, 9.0, 10), (5, 10.5, 9), -- Kobe 6 Proto Grinch (Nike)
+(6, 7.5, 15), (6, 8.5, 14), (6, 9.5, 12), (6, 10.5, 10); -- OG Samba (Adidas)
 
 -- -----------------------------------------------------
 -- Table `sneakerhead`.`shopping_cart`
@@ -173,6 +202,12 @@ SHOW WARNINGS;
 CREATE UNIQUE INDEX `user_id_UNIQUE` ON `sneakerhead`.`shopping_cart` (`user_id` ASC) ;
 
 SHOW WARNINGS;
+INSERT INTO `sneakerhead`.`shopping_cart` (`user_id`) VALUES
+(3),
+(4),
+(5),
+(6),
+(7);
 
 -- -----------------------------------------------------
 -- Table `sneakerhead`.`shopping_cart_items`
@@ -219,8 +254,9 @@ CREATE TABLE IF NOT EXISTS `sneakerhead`.`promo_codes` (
   `promo_code` VARCHAR(20) NOT NULL,
   `discount_type` ENUM("Fixed", "Percentage") NOT NULL,
   `discount_value` DECIMAL(10,2) UNSIGNED NOT NULL,
-  `is_active` ENUM("Y", "N") NOT NULL DEFAULT 'Y',
-  `is_deleted` ENUM("Y", "N") NOT NULL DEFAULT 'N',
+  `min_purchase` DECIMAL(10,2) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Minimum purchase amount to avail the promo code', 
+  `is_active` TINYINT(1) NOT NULL DEFAULT 1 COMMENT '1 = Active, 0 = Inactive',
+  `is_deleted` TINYINT(1) NOT NULL DEFAULT 0 COMMENT '1 = Deleted, 0 = Not Deleted',
   PRIMARY KEY (`promo_code`))
 ENGINE = InnoDB;
 
@@ -228,6 +264,11 @@ SHOW WARNINGS;
 CREATE UNIQUE INDEX `promo_code_UNIQUE` ON `sneakerhead`.`promo_codes` (`promo_code` ASC) ;
 
 SHOW WARNINGS;
+INSERT INTO `sneakerhead`.`promo_codes` (`promo_code`, `discount_type`, `discount_value`, `min_purchase`, `is_active`, `is_deleted`) 
+VALUES 
+('SNEAK10', 'Percentage', 10.00, 8000.00, 1, 0), -- 10% discount for minimum purchase of 8000
+('BOOST1K', 'Fixed', 1000.00, 7000.00, 1, 0), -- minus 1000 for minimum purchase of 7000
+('GRAB1500', 'Fixed', 1500.00, 10000.00, 1, 0); -- minus 1500 for minimum purchase of 10000
 
 -- -----------------------------------------------------
 -- Table `sneakerhead`.`orders`
@@ -364,6 +405,7 @@ INSERT INTO `sneakerhead`.`shoe_images` (`shoe_id`, `image_name`, `file_path`) V
 (5, 'kobe6.jpg', 'images/kobe6.jpg'),
 (6, 'samba.jpg', 'images/samba.jpg');
 SHOW WARNINGS;
+
 USE `sneakerhead` ;
 
 -- -----------------------------------------------------

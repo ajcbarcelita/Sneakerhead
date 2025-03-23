@@ -1,8 +1,11 @@
 <?php
-require 'database_conn.php';
+require 'db_conn.php';
 
 $sneakers = [];
-$sql = "SELECT s.name, s.brand, si.file_path AS image FROM shoes s JOIN shoe_images si ON s.id = si.shoe_id";
+$sql = "SELECT s.name, s.brand, si.file_path AS image 
+        FROM shoes s 
+        JOIN shoe_images si ON s.id = si.shoe_id 
+        WHERE s.is_deleted = 0"; // Added condition to exclude deleted shoes
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
@@ -68,7 +71,7 @@ $selected_brand = $_GET['brand'] ?? '';
             <?php if ($selected_brand === '' || $sneaker['brand'] === $selected_brand) : ?>
                 <div class="product">
                     <a href="product.php?name=<?php echo urlencode($sneaker['name']); ?>">
-                        <img src="<?php echo $sneaker['image']; ?>" alt="<?php echo $sneaker['name']; ?>">
+                        <img src="<?php echo $sneaker['image']; ?>" alt="<?php echo $sneaker['name']; ?>"> <!-- Updated file path -->
                     </a>
                     <p><?php echo $sneaker['name']; ?></p>
                     <p><strong>Brand:</strong> <?php echo $sneaker['brand']; ?></p>
