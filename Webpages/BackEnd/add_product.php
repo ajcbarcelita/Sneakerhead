@@ -9,6 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $shoe_image = $_FILES['shoe_image'];
     $price = $_POST['price']; // Assuming price is also posted
 
+    // Validate price and shoe count
+    if ($price < 0 || $shoe_count < 0) {
+        die("Price and Shoe Count cannot be negative.");
+    }
+
     // Check if the file is a valid JPEG or JPG
     $allowed_types = ['image/jpeg', 'image/jpg'];
     if (!in_array($shoe_image['type'], $allowed_types)) {
