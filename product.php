@@ -3,8 +3,10 @@
     error_reporting(E_ALL ^ E_WARNING);
 
     $id = $_GET["id"];
+
+    // Use default value if ID is not specified in the URL
     if (!$id)
-        $id = 1; // Default value if not specified in the URL
+        $id = 1;
 
     $servername = "localhost";
     $username = "root";
@@ -17,14 +19,20 @@
       die("Connection failed: ".$conn->connect_error);
     }
     
+    // Use default value if ID is invalid or out-of-bounds
+    if (!$conn->query("SELECT * FROM shoes WHERE id='".$id."'")->num_rows)
+        $id = 1;
+
     $sql = "SELECT * FROM shoes WHERE id='".$id."'";
     $sql_img = "SELECT * FROM shoe_images WHERE shoe_id='".$id."'";
+
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Product Page</title>
+    <!-- Dynamic title -->
+    <title><?php echo $conn->query($sql)->fetch_assoc()["name"]; ?> | Sneakerheads</title>
     <link href="https://fonts.googleapis.com/css?family=Newsreader&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet" />
     <style>
