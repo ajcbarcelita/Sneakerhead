@@ -2,7 +2,7 @@
 require "db_conn.php";
 
 // Fetch products from the database
-$sql = "SELECT s.id, s.name AS shoe_name, s.brand AS brand_name, si.file_path AS shoe_image, s.is_deleted 
+$sql = "SELECT s.id, s.name AS shoe_name, s.brand AS brand_name, si.file_path AS shoe_image, s.is_deleted, s.price 
         FROM shoes s 
         JOIN shoe_images si ON s.id = si.shoe_id";
 $result = $conn->query($sql);
@@ -39,6 +39,25 @@ while ($product_row = $product_result->fetch_assoc()) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sneakerheads Admin</title>
     <link rel="stylesheet" href="Server_Products.css">
+    <script>
+        function fetchProductDetails(productId) {
+            if (productId) {
+                fetch('BackEnd/fetch_product_details.php?id=' + productId)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.querySelector('.update-form input[name="shoe_name"]').value = data.shoe_name;
+                        document.querySelector('.update-form input[name="brand_name"]').value = data.brand_name;
+                        document.querySelector('.update-form input[name="price"]').value = data.price;
+                        // Add more fields as needed
+                    });
+            } else {
+                document.querySelector('.update-form input[name="shoe_name"]').value = '';
+                document.querySelector('.update-form input[name="brand_name"]').value = '';
+                document.querySelector('.update-form input[name="price"]').value = '';
+                // Clear more fields as needed
+            }
+        }
+    </script>
 </head>
 <body>
 
@@ -157,10 +176,10 @@ while ($product_row = $product_result->fetch_assoc()) {
 
         <div class="form-container">
             <h2>UPDATE PRODUCT</h2>
-            <form action="BackEnd/update_product.php" method="post" enctype="multipart/form-data"> <!-- Updated action -->
+            <form class="update-form" action="BackEnd/update_product.php" method="post" enctype="multipart/form-data"> <!-- Updated action -->
                 <div class="input-group">
                     <label for="id">Product ID: </label> <!-- Changed to dropdown -->
-                    <select name="id" required>
+                    <select name="id" required onchange="fetchProductDetails(this.value)">
                         <option value="" disabled selected>Select Product ID</option> <!-- Default null option -->
                         <?php foreach ($products as $product): ?>
                             <option value="<?= $product['id'] ?>"><?= $product['id'] ?> - <?= $product['name'] ?></option>
