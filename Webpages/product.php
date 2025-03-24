@@ -47,7 +47,7 @@
             .alt {
                 display: block;
             }
-            .price p {
+            .price {
             padding: 0;
         }
         }
@@ -58,6 +58,7 @@
         li {
             margin: 0;
             float: left;
+            padding: 14px 16px;
         }
         .logo, .price, h1 {
             margin: 0;
@@ -73,9 +74,9 @@
         .button {
             background-color: #426b1f;
             border-radius: 8px;
-        }
-        .button a, .button p {
             color: white;
+            text-align: center;
+            cursor: pointer;
         }
         ul {
             list-style-type: none;
@@ -86,9 +87,9 @@
         nav li {
             margin-left: 5%;
         }
-        #product li {
+        #product li, p.alt {
             margin-left: 1%;
-            margin-top: 1%;
+            margin-top: 3%;
         }
         li a, li p {
             margin: 0;
@@ -101,18 +102,13 @@
         header, section {
             margin-top: 50px;
         }
-        header, h1, h2 {
+        header, h1, h2, #reviews p {
             text-align: center;
         }
         img {
             width: 100%;
         }
     </style>
-    <script>
-        let selected_size = 0;
-        const sizes = document.getElementsByClassName("size");
-
-    </script>
 </head>
 <body>
     <nav>
@@ -128,38 +124,66 @@
     </nav>
     <header>
         <h1><?php echo $conn->query($info)->fetch_assoc()["name"]; ?></h1>
-        <p>5.0 (1)</p><!-- Add PHP -->
+        <p>5.0/5 (1)</p><!-- Add PHP -->
     </header>
     <section id="product">
         <img src="<?php echo $conn->query($img)->fetch_assoc()["file_path"]; ?>">
         <ul>
-            <li class="price"><p>$<?php echo $conn->query($info)->fetch_assoc()["price"]; ?></p></li>
-            <li class="wide button"><a href="#home">Add to Cart</a></li>
-            <li class="wide button"><a href="#home">Buy Now</a></li>
-            <li class="wide"><p>10 sold, 5 in stock</p></li><!-- Add PHP -->
-            <li class="wide button size right"><p>8</p></li>
-            <li class="wide button size right"><p>8.5</p></li>
-            <li class="wide button size right"><p>9</p></li>
-            <li class="wide button size right"><p>9.5</p></li>
-            <li class="wide right"><p>Select a size</p></li>
+            <li class="price">$<?php echo $conn->query($info)->fetch_assoc()["price"]; ?></li>
+            <li class="wide button">Add to Cart</li>
+            <li class="wide button">Buy Now</li>
+            <li class="wide">10 sold, 5 in stock</li><!-- Add PHP -->
+            <li class="wide button size right">9.5</li>
+            <li class="wide button size right">9</li>
+            <li class="wide button size right">8.5</li>
+            <li class="wide button size right">8</li>
+            <li class="wide right">Select a size</li>
         </ul>
         <ul class="alt">
-            <li class="button"><a href="#home">Add to Cart</a></li>
-            <li class="button"><a href="#home">Buy Now</a></li>
-            <li><p>10 sold, 5 in stock</p></li><!-- Add PHP -->
+            <li class="button">Add to Cart</li>
+            <li class="button">Buy Now</li>
+            <li>10 sold, 5 in stock</li><!-- Add PHP -->
         </ul>
         <p class="alt">Select a size</p>
         <ul class="alt">
-            <li class="button size"><p>8</p></li>
-            <li class="button size"><p>8.5</p></li>
-            <li class="button size"><p>9</p></li>
-            <li class="button size"><p>9.5</p></li>
+            <li class="button size1">8</li>
+            <li class="button size1">8.5</li>
+            <li class="button size1">9</li>
+            <li class="button size1">9.5</li>
         </ul>
-        </div>
     </section>
     <section id="reviews">
         <h2>Reviews</h2><!-- Add PHP -->
-        <p>No reviews yet. Buy one and write one!</p>
+        <p>No reviews yet. Buy a pair or two and tell us what you think!</p>
     </section>
+    <script>
+        let selected_size = 0;
+        const sizes = document.getElementsByClassName("size");
+        const sizes_alt = document.getElementsByClassName("size1");
+        const s_len = sizes.length;
+
+        for (let i = 0; i < s_len; i++) {
+            sizes[i].addEventListener("click", function() {
+                setSize(s_len - 1 - i);
+            });
+            sizes_alt[i].addEventListener("click", function() {
+                setSize(i);
+            });
+        }
+
+        function setSize(s) {
+            selected_size = s;
+            for (let i = 0; i < s_len; i++) {
+                if (i == s) {
+                    sizes[s_len - 1 - i].style.backgroundColor = "black";
+                    sizes_alt[i].style.backgroundColor = "black";
+                }
+                else {
+                    sizes[s_len - 1 - i].style.backgroundColor = "";
+                    sizes_alt[i].style.backgroundColor = "";
+                }
+            }
+        }
+    </script>
 </body>
 </html>
