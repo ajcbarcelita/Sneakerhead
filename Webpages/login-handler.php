@@ -6,15 +6,25 @@
     ini_set('session.use_strict_mode', 1); // Use strict mode to prevent session fixation
 
     session_start();
-    require "db_credentials.php";
+    require "db_conn.php";
     
+    if(!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = 0;
+    }
+
+    //not sure if this properly ends not just the db connection but the session as well
+    // add logic such that afte X minutes has passed, person is allowed to login again
+    if($_SESSION['login_attempts'] >= 5) {
+        die("Too many login attempts. Please try again later.");
+    }
+
     //Doing non-AJAX way first
     /*
-        This function sanitizes user input by removing unnecessary whitespaces (trim), converting special characters 
+        This function sanitizes user input by converting special characters 
         to HTML entities (htmlspecialchars), and removing HTML and PHP tags (strip_tags).
     */
     function sanitizeUserInput($input) {
-        return htmlspecialchars(strip_tags(trim($input)));
+        return htmlspecialchars(strip_tags($input));
     }
 
     /*
@@ -37,6 +47,7 @@
         return $result->fetch_assoc(); 
     }
 
+    // may return null if no user is found
     function getUserByEmail($conn, $email) {
         $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND is_deleted = 0");
         $stmt->bind_param("s", $email); // s means string
@@ -45,17 +56,19 @@
         return $result->fetch_assoc(); 
     }
 
-    // fucking login logic (non-AJAX)
-    $conn = new mysqli($servername, $username, $db_pw, $db_name);
-    
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
+    function getUserShoppingCart($conn, $user_id) {
+        $stmt = $conn->prepare("SELECT * FROM shopping_cart WHERE user_id = ?");
+        $stmt->bind_param("s", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc(); 
     }
+
+    // fucking login logic (non-AJAX)
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $id = sanitizeUserInput($_POST["id"]);
-        $password = sanitizeUserInput($_POST["password"]);
+        $password = trim($_POST["password"]);
 
         // Check if either id or password is empty
         if (empty($id) || empty($password)) {
@@ -70,14 +83,18 @@
             $user = getUserByUsername($conn, $id);
         }
 
-    
-        
         if ($user != null && password_verify($password, $user["pw_hash"])) {
             // Set session variables
             $_SESSION["id"] = $user["id"];
             $_SESSION["username"] = $user["username"];
             $_SESSION["email"] = $user["email"];
             $_SESSION["role_id"] = $user["role_id"];
+            
+            //add shopping cart PK in da session, by running a query to determine which shopping cart a user is linked to
+            $user_cart = getUserShoppingCart($conn, $user["id"]);
+            $_SESSION["cart_id"] = $user_cart["cart_id"];
+            $_SESSION["login_attempts"] = 0; // Reset login attempts on successful login
+            
             session_regenerate_id(); // Regenerate session id to prevent session fixation attacks
 
             // put logic here to check roles if either user or admin and redirect accordingly

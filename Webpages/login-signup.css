@@ -19,7 +19,7 @@ body {
 }
 
 /* Login box container */
-.login-container {
+.login-container, .signup-container {
     text-align: center;
 }
 
