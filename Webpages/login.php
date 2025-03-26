@@ -1,7 +1,5 @@
 <?php 
     session_start(); 
-    // Clear promo code-related session data
-    unset($_SESSION['promo_code'], $_SESSION['discount'], $_SESSION['promo_message'], $_SESSION['promo_error']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +19,11 @@
             if (isset($_SESSION["error"])) {
                 echo "<p class='error-message'>" . htmlspecialchars($_SESSION["error"]) . "</p>";
                 unset($_SESSION["error"]); // Clear error after displaying it
+            }
+            // Display success messages (e.g., logout success)
+            if (isset($_SESSION["message"])) {
+                echo "<p class='logout-message'>" . htmlspecialchars($_SESSION["logout_message"]) . "</p>";
+                unset($_SESSION["logout_message"]); // Clear message after displaying it
             }
         ?>
         <!-- Login form -->
