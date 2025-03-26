@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['order_success'] = true;
         $_SESSION['order_id'] = $order_id;
 
-        header("Location: index.php"); // Redirect to index.php
+        header("Location: Checkout.php"); 
         exit();
     } catch (Exception $e) {
         // Rollback transaction on error
