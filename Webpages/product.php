@@ -56,7 +56,7 @@
     <title><?php echo $conn->query($info)->fetch_assoc()["name"]; ?> | Sneakerheads</title>
     <link href="https://fonts.googleapis.com/css?family=Newsreader&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles/product.css">
+    <link rel="stylesheet" href="product.css">
 </head>
 <body>
     <!-- Navbar -->
