@@ -243,9 +243,11 @@ SHOW WARNINGS;
 CREATE INDEX `fk_shopping_cart_items_2_idx` ON `sneakerhead`.`shopping_cart_items` (`cart_id` ASC) ;
 
 SHOW WARNINGS;
-INSERT INTO `sneakerhead`.`shopping_cart_items` (`cart_id`, `shoe_id`, `shoe_us_size`, `quantity`, `price_at_addition`) VALUES
-(7, 1, 9.0, 2, 7395.00), -- Air Force 1 (Nike), size 9.0, quantity 2
-(7, 4, 10.5, 1, 11000.00); -- Ultraboost Light (Adidas), size 10.5, quantity 1
+
+INSERT INTO shopping_cart_items (`cart_id`, `shoe_id`, `shoe_us_size`, `quantity`, `price_at_addition`) VALUES
+(5, 1, 8.0, 1, 7395.00),
+(5, 2, 8.5, 1, 7395.00),
+(5, 6, 8.5, 2, 6800.00);
 
 -- -----------------------------------------------------
 -- Table `sneakerhead`.`promo_codes`

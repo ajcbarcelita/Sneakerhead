@@ -1,0 +1,127 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: white;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2f4f2f;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: black;
+}
+
+.nav-links a.btn {
+    color: white;
+}
+
+.btn {
+    background-color: #2f4f2f;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+/* Cart Section */
+.cart {
+    text-align: center;
+    padding: 40px;
+}
+
+.cart-header {
+    display: flex;
+    justify-content: space-between; /* Space out header elements */
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.cart-item img {
+    width: 80px;
+    height: auto;
+}
+
+.cart-item-info {
+    flex-grow: 1;
+    text-align: left;
+    margin-left: 15px;
+}
+
+.cart-item-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.cart-item-price {
+    font-size: 16px;
+}
+
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantity {
+    margin: 0 10px;
+}
+
+.remove {
+    color: red;
+    font-size: 12px;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+form {
+    margin: 0; /* Remove extra margin for consistent alignment */
+}
+
+.subtotal {
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.checkout {
+    background-color: #2f4f2f; /* Match the background color of the Sign Out button */
+    color: white;
+    padding: 8px 15px; /* Match padding of the Sign Out button */
+    text-decoration: none;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 14px; /* Adjust font size to match */
+    text-align: center;
+    cursor: pointer;
+}
