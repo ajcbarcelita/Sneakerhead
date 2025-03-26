@@ -19,6 +19,10 @@
                 echo "<p class='error-message'>" . htmlspecialchars($_SESSION["error"]) . "</p>";
                 unset($_SESSION["error"]); // Clear error after displaying it
             }
+            if (isset($_SESSION["message"])) {
+                echo "<p class='logout-message'>" . htmlspecialchars($_SESSION["logout_message"]) . "</p>";
+                unset($_SESSION["logout_message"]); // Clear message after displaying it
+            }
         ?>
         <!-- Signup form -->
         <form id="signin-form" method="post" action="signup-handler.php">
