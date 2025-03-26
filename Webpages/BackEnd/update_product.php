@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Redirect back to Server_Products.php
-    header("Location: ../Server_Products.php");
+    header("Location: ../server_product.php");
     exit();
 }
 
