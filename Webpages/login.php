@@ -28,8 +28,8 @@
         ?>
         <!-- Login form -->
         <form id="login-form" method="post" action="login-handler.php">
-            <input type="text" name="id" placeholder="Username or Email" class="login-input-field" required>
-            <input type="password" name="password" placeholder="Password" class="login-input-field" required>
+            <input type="text" name="id" placeholder="Username or Email" class="input-field" required>
+            <input type="password" name="password" placeholder="Password" class="input-field" required>
             <button type="submit" class="login-button">Login</button>
         </form>
         
