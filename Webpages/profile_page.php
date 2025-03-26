@@ -39,13 +39,13 @@
     include 'db_conn.php';
     session_start();
 
-    if (!isset($_SESSION['user_id'])) {
+    if (!isset($_SESSION['id'])) {
         header("Location: login.php");
         exit();
     }
 
     // Get user ID from session
-    $id = $_SESSION['user_id'];
+    $id = $_SESSION['id'];
 
     // Testing purpose
     // $id = 3;
