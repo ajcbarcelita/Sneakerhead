@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $conn->query($sql_inventory);
 
         // Redirect to Server_Products.php
-        header("Location: ../Server_Products.php");
+        header("Location: ../server_Products.php");
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

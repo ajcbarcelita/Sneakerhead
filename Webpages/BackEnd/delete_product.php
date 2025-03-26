@@ -18,6 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn->close();
-header("Location: ../Server_Products.php"); // Updated file path
+header("Location: ../server_Products.php"); // Updated file path
 exit();
 ?>

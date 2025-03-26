@@ -38,7 +38,7 @@ while ($product_row = $product_result->fetch_assoc()) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sneakerheads Admin</title>
-    <link rel="stylesheet" href="Server_Products.css">
+    <link rel="stylesheet" href="server_Products.css">
     <script>
         function fetchProductDetails(productId) {
             if (productId) {
