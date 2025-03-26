@@ -1,21 +1,13 @@
 <?php
 session_start();
 require "db_conn.php";
-
-// Note: Remove this comment if login.php is fully implemented!
-// user authentication off for now. 
-/*
+// I removed the comment for hiding the login part of the page
 if (!isset($_SESSION['id'])) {
     // Redirect to login page if not logged in
     header("Location: login.php");
     exit();
 }
-*/
 
-// This where I set a test user ID for simulation purpose
-if (!isset($_SESSION['id'])) {
-    $_SESSION['id'] = 2; // existing user ID from the database database
-}
 $user_id = $_SESSION['id'];
 $user_query = "SELECT * FROM users WHERE id = ?";
 $stmt = $conn->prepare($user_query);
@@ -165,16 +157,13 @@ if (!empty($errors)) {
                         <?php endif; ?>
                     </div>
 
-                    <!-- Billing Address -->
+                      <!-- Billing Address -->
                     <div class="checkout-section">
                         <h2 class="section-title">Billing Address</h2>
-                        <div class="radio-button">
+                        <div class="radio-button" style="opacity: 0.7;">
                             <input type="radio" name="billing" value="same" checked>
                             <span>Same as shipping address</span>
-                        </div>
-                        <div class="radio-button">
-                            <input type="radio" name="billing" value="different">
-                            <span>Use different billing address</span>
+                            <input type="hidden" name="billing" value="same">
                         </div>
                     </div>
 
@@ -182,13 +171,9 @@ if (!empty($errors)) {
                     <div class="checkout-section">
                         <h2 class="section-title">Delivery</h2>
                         <div class="radio-section">
-                            <div class="radio-button">
+                        <div class="radio-button" style="opacity: 0.7;">
                                 <input type="radio" name="delivery" value="ship" checked>
                                 <span>Ship/Deliver</span>
-                            </div>
-                            <div class="radio-button">
-                                <input type="radio" name="delivery" value="pickup">
-                                <span>Pickup in Store</span>
                             </div>
                         </div>
 
@@ -245,21 +230,6 @@ if (!empty($errors)) {
                         </div>
                         <p id="promo-message" class="promo-message"></p>
                         <input type="hidden" name="discount_amount" id="discount_amount" value="0">
-                    </div>
-
-                    <!-- Payment -->
-                    <div class="checkout-section">
-                        <h2 class="section-title">Payment</h2>
-                        <div class="form-grid">
-                            <div class="radio-button radio-button-full">
-                                <input type="radio" name="payment" value="bank" checked>
-                                <span>Bank Deposit</span>
-                            </div>
-                            <div class="radio-button radio-button-full">
-                                <input type="radio" name="payment" value="gcash">
-                                <span>GCash</span>
-                            </div>
-                        </div>
                     </div>
                 </form>
             </div>
