@@ -3,6 +3,7 @@
     error_reporting(E_ALL ^ E_WARNING);
 
     $id = $_GET["id"];
+    $user = 1; // Test
 
     // Use default value if ID is not specified in the URL
     if (!$id)
@@ -25,11 +26,25 @@
 
     $info = "SELECT * FROM shoes WHERE id='".$id."'";
     $img = "SELECT * FROM shoe_images WHERE shoe_id='".$id."'";
-    $sales = "SELECT SUM(quantity) FROM order_items WHERE shoe_id='".$id."'";
     $review = "SELECT * FROM shoe_reviews WHERE shoe_id='".$id."'";
 
     $r_num = $conn->query("SELECT COUNT(*) FROM shoe_reviews WHERE shoe_id='".$id."'")->fetch_array()[0];
-    $inv = $conn->query("SELECT * FROM shoe_size_inventory WHERE shoe_id='".$id."' AND stock > 0");
+    $inv = $conn->query("SELECT shoe_us_size, stock FROM shoe_size_inventory WHERE shoe_id='".$id."' AND stock > 0");
+
+    $size = array();
+    $sales = array();
+    $stock = array();
+
+    while ($s = $inv->fetch_array()) {
+        $size[] = $s[0];
+        $stock[] = $s[1];
+        $sum = $conn->query("SELECT SUM(quantity) FROM order_items WHERE shoe_id='".$id."' AND shoe_size='".$s[0]."'")->fetch_array()[0];
+        
+        if (!$sum)
+            $sales[] = 0;
+        else
+            $sales[] = $sum;
+    }
 
 ?>
 
@@ -41,10 +56,10 @@
     <link href="https://fonts.googleapis.com/css?family=Newsreader&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet" />
     <style>
-        .alt {
+        .alt, #max {
             display: none;
         }
-        @media only screen and (max-width: 980px) {
+        @media only screen and (max-width: 900px) {
             .wide {
                 display: none;
             }
@@ -64,7 +79,7 @@
             float: left;
             padding: 14px 16px;
         }
-        .logo, .price, h1 {
+        .logo, .price, h1, #quantity {
             margin: 0;
             font-family: Newsreader;
             font-size: xx-large;
@@ -100,7 +115,6 @@
             margin: 0;
             display: block;
             text-align: center;
-            padding: 14px 16px;
             text-decoration: none;
             color: black;
         }
@@ -137,6 +151,12 @@
         .review span {
             margin-left: 10px;
         }
+        #max {
+            color: red;
+        }
+        #quantity {
+            width: 3%;
+        }
     </style>
 </head>
 <body>
@@ -144,11 +164,8 @@
         <ul class="main">
             <li class="logo fl"><a href=".">SNEAKERHEADS</a></div>
             <li class="button right">Log Out</li>
-            <li class="alt right"><p>Menu</p></li>
-
-            <li class="wide right"><a href="#news">Cart (0)</a></li><!-- Add PHP -->
-            <li class="wide right"><a href="#contact">Account</a></li>
-            <li class="wide right"><a class="active" href="#about">Shop</a></li>
+            <li class="right"><a href="#news">Cart (0)</a></li><!-- Add PHP -->
+            <li class="right"><a href="#contact">Account</a></li>
         </ul>
     </nav>
     <header>
@@ -167,37 +184,44 @@
     <section id="product">
         <div class="image">
             <img src="<?php echo $conn->query($img)->fetch_assoc()["file_path"]; ?>" alt="Close-up view of the shoe">
-            <span class="soldout">SOLD OUT</span>
+            <?php
+                if (!count($size))
+                    echo "<span class=\"soldout\">SOLD OUT</span>";
+            ?>
         </div>
         <ul>
-            <li class="price">$<?php echo $conn->query($info)->fetch_assoc()["price"]; ?></li>
+            <li class="price">PHP <?php echo $conn->query($info)->fetch_assoc()["price"]; ?></li>
             <li class="wide button add">Add to Cart</li>
-            <li class="wide button buy">Buy Now</li>
-            <li class="wide">10 sold, 5 in stock</li><!-- Add PHP -->
             <?php
-                while ($size = $inv->fetch_assoc())
-                    echo "<li class=\"wide button size right\">".$size["shoe_us_size"]."</li>";
+                for ($i = 0; $i < count($size); $i++)
+                    echo "<li class=\"wide inv\">".$sales[$i]." sold, ".$stock[$i]." in stock</li>";
+            ?>
+            <?php
+                for ($i = count($size)-1; $i >= 0; $i--)
+                    echo "<li class=\"wide button size right\">".$size[$i]."</li>";
             ?>
             <li class="wide right">Select a size</li>
         </ul>
         <ul class="alt">
             <li class="button add">Add to Cart</li>
-            <li class="button buy">Buy Now</li>
-            <li>10 sold, 5 in stock</li><!-- Add PHP -->
+            <?php
+                for ($i = 0; $i < count($size); $i++)
+                    echo "<li class=\"inv1\">".$sales[$i]." sold, ".$stock[$i]." in stock</li>";
+            ?>
         </ul>
         <p class="alt">Select a size</p>
         <ul class="alt">
-            <li class="button size1">8</li>
-            <li class="button size1">8.5</li>
-            <li class="button size1">9</li>
-            <li class="button size1">9.5</li>
+            <?php
+                for ($i = 0; $i < count($size); $i++)
+                    echo "<li class=\"button size1\">".$size[$i]."</li>";
+            ?>
         </ul>
         <ul>
             <li>Quantity</li>
-            <li class="price" id="quantity">1</li>
+            <li id="quantity">1</li>
             <li class="button quantity">+</li>
             <li class="button quantity">-</li>
-            <li>Max limit</li>
+            <li id="max">Maximum limit reached</li>
         </ul>
     </section>
     <section id="reviews">
@@ -222,39 +246,49 @@
     <script>
         let selected_size = 0;
         let qty = 1;
+
+        const limit = [<?php
+            for ($i = 0; $i < count($size); $i++)
+                echo $stock[$i].",";
+        ?>null];
+
         const xhttp = new XMLHttpRequest();
         const a = document.getElementsByClassName("add");
-        const b = document.getElementsByClassName("buy");
+        const i = document.getElementsByClassName("inv");
+        const i1 = document.getElementsByClassName("inv1");
+        const m = document.getElementById("max");
         const s = document.getElementsByClassName("size");
         const s1 = document.getElementsByClassName("size1");
         const q = document.getElementsByClassName("quantity");
         const qd = document.getElementById("quantity");
-        const s_len = s.length; // Available sizes can be changed in the future
+        const s_len = s.length;
 
         // Event listeners
-        for (let i = 0; i < 2; i++) {
-            a[i].addEventListener("click", function() {
+        for (let j = 0; j < 2; j++) {
+            a[j].addEventListener("click", function() {
                 addToCart();
-            });
-            b[i].addEventListener("click", function() {
-                buyNow();
             });
         }
 
-        for (let i = 0; i < s_len; i++) {
-            s[i].addEventListener("click", function() {
-                setSize(s_len - 1 - i); // Elements are displayed right-to-left when float:right is used
+        for (let j = 0; j < s_len; j++) {
+            s[j].addEventListener("click", function() {
+                setSize(s_len - 1 - j);
             });
-            s1[i].addEventListener("click", function() {
-                setSize(i);
+            s1[j].addEventListener("click", function() {
+                setSize(j);
             });
         }
 
         q[0].addEventListener("click", function() {
-            qty++;
-            qd.innerHTML = qty;
+            if (qty < limit[selected_size]) {
+                qty++;
+                qd.innerHTML = qty;
+            }
+            else
+                m.style.display = "block";
         });
         q[1].addEventListener("click", function() {
+            m.style.display = "";
             if (qty > 1) {
                 qty--;
                 qd.innerHTML = qty;
@@ -263,14 +297,19 @@
 
         function setSize(size) {
             selected_size = size;
-            for (let i = 0; i < s_len; i++) {
-                if (i == size) {
-                    s[s_len - 1 - i].style.backgroundColor = "black";
-                    s1[i].style.backgroundColor = "black";
+            qty = 1;
+            displayInv(size);
+            m.style.display = "";
+            qd.innerHTML = qty;
+
+            for (let j = 0; j < s_len; j++) {
+                if (j == size) {
+                    s[s_len - 1 - j].style.backgroundColor = "black";
+                    s1[j].style.backgroundColor = "black";
                 }
                 else {
-                    s[s_len - 1 - i].style.backgroundColor = "";
-                    s1[i].style.backgroundColor = "";
+                    s[s_len - 1 - j].style.backgroundColor = "";
+                    s1[j].style.backgroundColor = "";
                 }
             }
         }
@@ -279,9 +318,22 @@
             alert("Adding to cart is not yet implemented. Size is " + selected_size);
         }
 
-        function buyNow() {
-            alert("Buying is not yet implemented. Size is " + selected_size);
+        function displayInv(size) {
+            for (let j = 0; j < s_len; j++) {
+                if (j == size) {
+                    i[j].style.display = "";
+                    i1[j].style.display = "";
+                }
+                else {
+                    i[j].style.display = "none";
+                    i1[j].style.display = "none";
+                }
+            }
         }
+
+        setSize(0);
+        displayInv(0);
+
     </script>
 </body>
 </html>
