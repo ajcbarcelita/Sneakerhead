@@ -1,118 +1,136 @@
 <?php
-    // Set secure session cookie parameters 
-    ini_set('session.cookie_lifetime', 0); // Session cookie will expire when the browser is closed
+    // Set secure session cookie parameters to enhance security
+    ini_set('session.cookie_lifetime', 0); // Session cookie expires when the browser is closed
     ini_set('session.cookie_httponly', 1); // Prevent JavaScript access to session cookie
-    ini_set('session.cookie_secure', 1); // Ensure the session cookie is sent over HTTPS
-    ini_set('session.use_strict_mode', 1); // Use strict mode to prevent session fixation
+    ini_set('session.cookie_secure', 1); // Ensure session cookie is sent over HTTPS
+    ini_set('session.use_strict_mode', 1); // Use strict mode to prevent session fixation attacks
 
+    // Start the session
     session_start();
+
+    // Include the database connection file
     require "db_conn.php";
-    
-    if(!isset($_SESSION['login_attempts'])) {
+
+    // Initialize login attempts if not already set
+    if (!isset($_SESSION['login_attempts'])) {
         $_SESSION['login_attempts'] = 0;
     }
 
-    //not sure if this properly ends not just the db connection but the session as well
-    // add logic such that afte X minutes has passed, person is allowed to login again
-    if($_SESSION['login_attempts'] >= 5) {
-        die("Too many login attempts. Please try again later.");
+    // Check if the last login attempt was more than 5 minutes ago
+    if (isset($_SESSION['last_attempt_time'])) {
+        $timeSinceLastAttempt = time() - $_SESSION['last_attempt_time'];
+        if ($timeSinceLastAttempt > 300) { // 300 seconds = 5 minutes
+            $_SESSION['login_attempts'] = 0; // Reset login attempts
+            unset($_SESSION['last_attempt_time']); // Clear the last attempt time
+        }
     }
 
-    //Doing non-AJAX way first
-    /*
-        This function sanitizes user input by converting special characters 
-        to HTML entities (htmlspecialchars), and removing HTML and PHP tags (strip_tags).
-    */
+    // Block login if the user has exceeded the maximum number of attempts
+    if ($_SESSION['login_attempts'] >= 5) {
+        $_SESSION["error"] = "Too many login attempts. Please try again in 5 minutes.";
+        header("Location: login.php");
+        exit();
+    }
+
+    // Function to sanitize user input to prevent XSS and other attacks
     function sanitizeUserInput($input) {
         return htmlspecialchars(strip_tags($input));
     }
 
-    /*
-        This function checks if the email is valid by using the filter_var function with the FILTER_VALIDATE_EMAIL flag.
-        The filter_var function returns the filtered data if the email is valid; otherwise, it returns false.
-        The FILTER_VALIDATE_EMAIL flag checks if the email is valid according to the email address syntax, 
-        that is, if it has the format: [name]@[domain].[top-level domain]
-
-        If this function returns false, the entry should be treated as a username.
-    */
+    // Function to validate if the input is a valid email address
     function isEmail($email) {
         return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
     }
 
+    // Function to retrieve a user by username from the database
     function getUserByUsername($conn, $username) {
-        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND is_deleted = 0");
-        $stmt->bind_param("s", $username); // s means string
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND is_deleted = 0 LIMIT 1");
+        $stmt->bind_param("s", $username); // Bind the username as a string
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result->fetch_assoc(); 
+        return $result->fetch_assoc(); // Return the user data as an associative array
     }
 
-    // may return null if no user is found
+    // Function to retrieve a user by email from the database
     function getUserByEmail($conn, $email) {
-        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND is_deleted = 0");
-        $stmt->bind_param("s", $email); // s means string
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND is_deleted = 0 LIMIT 1");
+        $stmt->bind_param("s", $email); // Bind the email as a string
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result->fetch_assoc(); 
+        return $result->fetch_assoc(); // Return the user data as an associative array
     }
 
+    // Function to retrieve the user's shopping cart from the database
     function getUserShoppingCart($conn, $user_id) {
-        $stmt = $conn->prepare("SELECT * FROM shopping_cart WHERE user_id = ?");
-        $stmt->bind_param("s", $user_id);
+        $stmt = $conn->prepare("SELECT * FROM shopping_cart WHERE user_id = ? LIMIT 1");
+        $stmt->bind_param("s", $user_id); // Bind the user ID as a string
         $stmt->execute();
         $result = $stmt->get_result();
-        return $result->fetch_assoc(); 
+        return $result->fetch_assoc(); // Return the shopping cart data as an associative array
     }
 
-    // fucking login logic (non-AJAX)
-
+    // Handle the login form submission
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        // Sanitize and retrieve the input values
         $id = sanitizeUserInput($_POST["id"]);
         $password = trim($_POST["password"]);
 
-        // Check if either id or password is empty
+        // Check if the input fields are empty
         if (empty($id) || empty($password)) {
-            header("Location: login.php?error=Please fill in all required fields.");
+            $_SESSION["error"] = "Please fill in all fields.";
+            header("Location: login.php");
             exit();
         }
-        
-        // Check if id entered is an email; if T, it is an email; otherwise, treat as a username
-        if(isEmail($id) == true) {
+
+        // Determine if the input is an email or username and retrieve the user
+        if (isEmail($id)) {
             $user = getUserByEmail($conn, $id);
         } else {
             $user = getUserByUsername($conn, $id);
         }
 
+        // Check if the user exists and the password is correct
         if ($user != null && password_verify($password, $user["pw_hash"])) {
-            // Set session variables
+            // Reset login attempts on successful login
+            $_SESSION["login_attempts"] = 0;
+            session_regenerate_id(true); // Regenerate session ID to prevent session fixation attacks
+
+            // Store user information in the session
             $_SESSION["id"] = $user["id"];
             $_SESSION["username"] = $user["username"];
             $_SESSION["email"] = $user["email"];
             $_SESSION["role_id"] = $user["role_id"];
-            
-            //add shopping cart PK in da session, by running a query to determine which shopping cart a user is linked to
-            $user_cart = getUserShoppingCart($conn, $user["id"]);
-            $_SESSION["cart_id"] = $user_cart["cart_id"];
-            $_SESSION["login_attempts"] = 0; // Reset login attempts on successful login
-            
-            session_regenerate_id(); // Regenerate session id to prevent session fixation attacks
 
-            // put logic here to check roles if either user or admin and redirect accordingly
-            //SECOND FLAG FOR CHECKING WHY THE LOGIN FOR USERS IS NOT WORKING
-            switch($_SESSION["role_id"]) {
+            // Retrieve and store the user's shopping cart if they are a regular user
+            if ($user['role_id'] == 2) {
+                $user_cart = getUserShoppingCart($conn, $user["id"]);
+                $_SESSION["cart_id"] = $user_cart["cart_id"] ?? null;
+            } else {
+                $_SESSION["cart_id"] = null;
+            }
+
+            // Redirect the user based on their role
+            switch ($_SESSION["role_id"]) {
                 case "1": // Admin
                     header("Location: server_product.php");
                     break;
                 case "2": // User
                     header("Location: index.php");
                     break;
-                default: 
-                    header("Location: login.php?error=Unknown role. Please contact the administrator.");
+                default:
+                    $_SESSION["error"] = "Unknown role. Please contact the administrator.";
+                    header("Location: login.php");
                     break;
             }
             exit();
         } else {
-            header("Location: login.php?error=Invalid username/email or password.");
+            // Increment login attempts and set an error message for invalid credentials
+            $_SESSION["error"] = "Invalid login credentials.";
+            $_SESSION['login_attempts']++;
+            $_SESSION['last_attempt_time'] = time();
+
+            // Redirect back to the login page
+            header("Location: login.php");
             exit();
         }
     }

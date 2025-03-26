@@ -1,3 +1,6 @@
+<?php 
+    session_start(); 
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,9 +16,9 @@
         <h2>Login to Your Account</h2>
         <h3>Log in to pick up where you left off and make shopping easier.</h3>
         <?php
-            // Display error message if login fails
-            if (isset($_GET['error'])) {
-                echo '<p style="color:red;">' . htmlspecialchars($_GET['error']) . '</p>';
+            if (isset($_SESSION["error"])) {
+                echo "<p class='error-message'>" . htmlspecialchars($_SESSION["error"]) . "</p>";
+                unset($_SESSION["error"]); // Clear error after displaying it
             }
         ?>
         <!-- Login form -->
