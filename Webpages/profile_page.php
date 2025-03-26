@@ -46,7 +46,7 @@
     // }
 
     // $id = $_SESSION['user_id'];
-    $id = 2;
+    $id = 3;
 
     //SELECT QUERY FOR PROFILE DETAILS
     $sql = "SELECT username, fname, lname, phone_no, email, pw_hash, address_line, province, city_municipality
@@ -96,34 +96,31 @@
     }
 
     // SELECT QUERY FOR ORDER HISTORY
-    // $sql = "SELECT 
-    //              o.order_id,
-    //              GROUP_CONCAT(DISTINCT CONCAT(s.brand, ' - ', s.name) ORDER BY s.brand, s.name ASC) AS brand_name,
-    //              o.total_price,
-    //              p.promo_code,
-    //              o.created_at AS order_date,
-    //              u.address_line
-    //        FROM orders o
-    //        LEFT JOIN promo_codes p ON o.promo_code = p.promo_code_id
-    //        JOIN order_items oi ON o.order_id = oi.order_id
-    //        JOIN shoe_size_inventory ssi ON oi.shoe_size = ssi.shoe_us_size 
-    //        JOIN shoes s ON ssi.shoe_id = s.id
-    //        JOIN users u ON o.user_id = u.id
-    //        WHERE o.user_id = ? 
-    //        GROUP BY o.order_id, o.created_at";
+    $sql = "SELECT 
+                o.order_id,
+                GROUP_CONCAT(DISTINCT CONCAT(s.brand, ' - ', s.name) ORDER BY s.brand, s.name ASC SEPARATOR ', ') AS brand_name,
+                o.total_price,
+                o.promo_code,
+                DATE_FORMAT(o.created_at, '%M %e, %Y') AS order_date,
+                u.address_line
+            FROM orders o
+            JOIN users u ON o.user_id = u.id
+            JOIN order_items oi ON o.order_id = oi.order_id
+            JOIN shoes s ON oi.shoe_id = s.id
+            LEFT JOIN promo_codes p ON o.promo_code = p.promo_code
+            WHERE o.user_id = ? 
+            GROUP BY o.order_id, o.total_price, o.promo_code, o.created_at, u.address_line";
 
-    // $order_stmt = $conn->prepare($sql);
-    // $order_stmt->bind_param("i", $id);
-    // $order_stmt->execute();
-    // $order_result = $order_stmt->get_result();
-    // $orders = $order_result->fetch_all(MYSQLI_ASSOC);
+    $order_stmt = $conn->prepare($sql);
+    $order_stmt->bind_param("i", $id);
+    $order_stmt->execute();
+    $order_result = $order_stmt->get_result();
 
-    // // INPUT DATA INTO $orders ARRAY
-    // $orders = [];
-    // while ($row = $order_result->fetch_assoc())
-    //     $orders[] = $row;
-
-    // $order_stmt->close();
+    $orders = [];
+    while ($row = $order_result->fetch_assoc()) {
+        $orders[] = $row;
+    }
+    $order_stmt->close();
 
     $conn->close();
     ?>
@@ -133,9 +130,8 @@
         <div id="profile-details">
             <form method="post" action="profile_page.php">
                 <div class="profile-container">
-                    <h2>Edit Profile Details <span>SAVE TO EDIT</span></h2>
+                    <h2>Edit Profile Details <span>SAVE TO EDIT. LEAVE BLANK TO NOT MODIFY.</span></h2>
                     <hr>
-
                     <div class="text-form">
                         <label for="username">Username:</label>
                         <div class="input-container">
@@ -261,7 +257,7 @@
                                 ?>
                             </p>
                             <div class="order-meta">
-                                <span class="status"><?php echo $order["address_line"]; ?></span>
+                                <span class="status"><?php echo 'Address: ' . $order["address_line"]; ?></span>
                                 <p class="order-date"><?php echo date("d.m.Y", strtotime($order["order_date"])); ?></p>
                             </div>
                         </div>

@@ -209,7 +209,7 @@ input[type="checkbox"] {
 }
 
 .toggle:checked+.eye-icon::after {
-    content: url('img/eye.png');
+    content: url('images/eye.png');
 }
 
 .save {
