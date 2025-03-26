@@ -16,9 +16,10 @@ body {
 }
 
 .logo {
+    font-family: 'Newsreader';
     font-size: 20px;
-    font-weight: bold;
-    color: #2f4f2f;
+    font-weight: bold; /* Ensure the logo is bold */
+    color: #426B1F; /* Match the color from checkout */
 }
 
 .nav-links {

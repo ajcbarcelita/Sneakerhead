@@ -111,17 +111,16 @@ unset($_SESSION['promo_message'], $_SESSION['promo_error']);
 
 <body>
     <!-- Header -->
-    <header>
-        <div class="header-container">
-            <h1 class="site-title">SNEAKERHEADS</h1>
-            <nav>
-                <a href="index.php" class="nav-link">Home</a>
-                <a href="index.php#products" class="nav-link">Shop</a>
-                <a href="profile_page.php" class="nav-link">My Profile</a>
-                <a href="logout-handler.php" class="log-out-btn">Log out</a>
-            </nav>
-        </div>
-    </header>
+    <nav class="navbar">
+        <div class="logo" style="font-family: 'Newsreader'; color: #426B1F;">SNEAKERHEADS</div>
+        <ul class="nav-links">
+            <li><a href="index.php">Home</a></li>
+            <li><a href="Checkout.php">Check Out</a></li>
+            <li><a href="profile_page.php">My Profile</a></li>
+            <li><a href="cart.php">Cart</a></li>
+            <li><a href="logout-handler.php" class="btn">Sign Out</a></li>
+        </ul>
+    </nav>
 
     <div class="main-container">
         <h1 class="page-title">Check out</h1>

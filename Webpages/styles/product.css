@@ -75,6 +75,7 @@ img {
     display: flex; /* Use flexbox for centering */
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
+    margin-top: -20px; /* Add padding between the image and the text */
 }
 #soldout {
     position: absolute;
@@ -111,6 +112,13 @@ h2 {
     background-color: black;
 }
 
+.btn {
+    background-color: #2f4f2f;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
 /* Navbar */
 .navbar {
     display: flex;
@@ -121,9 +129,10 @@ h2 {
 }
 
 .logo {
+    font-family: 'Newsreader';
     font-size: 20px;
-    font-weight: bold;
-    color: #2f4f2f;
+    font-weight: bold; /* Ensure the logo is bold */
+    color: #426B1F; /* Match the color from checkout */
 }
 
 .nav-links {
@@ -139,11 +148,4 @@ h2 {
 
 .nav-links a.btn {
     color: white;
-}
-
-.btn {
-    background-color: #2f4f2f;
-    color: white;
-    padding: 8px 15px;
-    border-radius: 5px;
 }
