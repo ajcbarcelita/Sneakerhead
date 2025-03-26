@@ -90,6 +90,7 @@ $discount = isset($_SESSION['discount']) ? $_SESSION['discount'] : 0;
 $promo_message = isset($_SESSION['promo_message']) ? $_SESSION['promo_message'] : '';
 $promo_error = isset($_SESSION['promo_error']) ? $_SESSION['promo_error'] : '';
 $new_total = $subtotal + $shipping - $discount;
+$_SESSION['total_amount'] = $new_total; // Save total amount in session
 
 // Clear promo messages after displaying
 unset($_SESSION['promo_message'], $_SESSION['promo_error']);
@@ -294,7 +295,7 @@ unset($_SESSION['promo_message'], $_SESSION['promo_error']);
                         <span id="total">₱<?php echo number_format($new_total, 2); ?></span>
                     </div>
                 </div>
-                <button type="submit" class="complete-order-btn" form="checkout-form" <?php echo count($cart_items) == 0 ? 'disabled' : ''; ?>>
+                <button type="submit" class="complete-order-btn" form="checkout-form" formaction="complete_order_handler.php" <?php echo count($cart_items) == 0 ? 'disabled' : ''; ?>>
                     Complete Order
                 </button>
             </div>
