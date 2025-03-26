@@ -72,8 +72,8 @@
     // Handle the login form submission
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Sanitize and retrieve the input values
-        $id = sanitizeUserInput($_POST["id"]);
-        $password = trim($_POST["password"]);
+        $id = trim(sanitizeUserInput($_POST["id"]));
+        $password = sanitizeUserInput($_POST["password"]);
 
         // Check if the input fields are empty
         if (empty($id) || empty($password)) {
