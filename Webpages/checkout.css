@@ -179,7 +179,7 @@ input[name="middleName"] {
     gap: 12px;
 }
 
-/* Apply button styling */
+/* Apply button styling (shared with Clear button) */
 .apply-btn {
     padding: 8px 16px;
     background-color: #4D7C0F;
