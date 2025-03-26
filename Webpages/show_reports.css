@@ -1,7 +1,36 @@
 body {
-    font-family: 'Inter', sans-serif;
-    margin: 20px;
-    background-color: #f5f5f5;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background-color: white;
+    border-bottom: 2px solid #ddd;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+nav a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+button {
+    background: green;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
 }
 
 h2 {
@@ -10,6 +39,7 @@ h2 {
     font-family: 'Inter', sans-serif;
     font-size: 28px;
     background-color: #f8f9fa; 
+    margin: 20px;
     padding: 15px;
     border-radius: 8px; 
     box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
@@ -17,10 +47,11 @@ h2 {
 
 h3 {
     font-size: 25px;
-    padding-left: 10px;
+    font-family: 'Inter', sans-serif;
 }
 
 .brand-section {
+    margin: 20px;
     margin-bottom: 30px;
     background: white;
     padding-right: 15px;
@@ -54,6 +85,25 @@ th, td {
 th {
     background: #481f6bF2;
     color: white;
+}
+
+.sales-section {
+    margin: 20px;
+    background: white;
+    padding-right: 15px;
+    padding-left: 15px;
+    padding-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.3);
+}
+
+.sales-header {
+    background-color: #426B1F;
+    color: white;
+    padding: 10px;
+    margin: 0 -15px 15px -15px;
+    border-radius: 8px 8px 0 0;
+    font-family: 'Inter', sans-serif;
 }
 
 .sizes-table {
