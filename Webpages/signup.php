@@ -52,7 +52,7 @@
         </form>
         
         <!--Link to login page-->
-        <p class="signup-text">Already have an account? <a href="signup.php" class="signup-link">Login!</a></p>
+        <p class="signup-text">Already have an account? <a href="login.php" class="signup-link">Login!</a></p>
     </div>
 </body>
 </html>
