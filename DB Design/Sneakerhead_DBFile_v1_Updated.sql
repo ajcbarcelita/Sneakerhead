@@ -516,33 +516,3 @@ SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 USE `sneakerhead`;
-
-DELIMITER $$
-
-USE `sneakerhead`$$
-DROP TRIGGER IF EXISTS `sneakerhead`.`calculateSubtotal` $$
-SHOW WARNINGS$$
-USE `sneakerhead`$$
-CREATE DEFINER = CURRENT_USER TRIGGER `sneakerhead`.`calculateSubtotal` 
-BEFORE INSERT ON `order_items` 
-FOR EACH ROW
-BEGIN
-	SET NEW.subtotal = NEW.quantity * NEW.price_at_purchase;
-END$$
-
-SHOW WARNINGS$$
-
-USE `sneakerhead`$$
-DROP TRIGGER IF EXISTS `sneakerhead`.`recalculateSubtotal` $$
-SHOW WARNINGS$$
-USE `sneakerhead`$$
-CREATE DEFINER = CURRENT_USER TRIGGER `sneakerhead`.`recalculateSubtotal` 
-BEFORE UPDATE ON `order_items` 
-FOR EACH ROW
-BEGIN
-	SET NEW.subtotal = NEW.quantity * NEW.price_at_purchase;
-END$$
-
-SHOW WARNINGS$$
-
-DELIMITER ;
