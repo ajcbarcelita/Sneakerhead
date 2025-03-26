@@ -44,7 +44,7 @@ $cart_items = $result->fetch_all(MYSQLI_ASSOC);
             <li><a href="Checkout.php">Check Out</a></li>
             <li><a href="profile_page.php">My Profile</a></li>
             <li><a href="cart.php">Cart</a></li>
-            <li><a href="#" class="btn">Sign Out</a></li>
+            <li><a href="login.php" class="btn">Sign Out</a></li>
         </ul>
     </nav>
 
