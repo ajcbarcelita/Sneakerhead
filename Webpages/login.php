@@ -1,5 +1,7 @@
 <?php 
     session_start(); 
+    // Clear promo code-related session data
+    unset($_SESSION['promo_code'], $_SESSION['discount'], $_SESSION['promo_message'], $_SESSION['promo_error']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
