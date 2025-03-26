@@ -130,6 +130,7 @@ input[name="middleName"] {
 
 
 .form-input {
+    box-sizing: border-box;
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
@@ -176,6 +177,35 @@ input[name="middleName"] {
     display: grid; 
     grid-template-columns: 1fr 1fr; 
     gap: 12px;
+}
+
+/* Apply button styling */
+.apply-btn {
+    padding: 8px 16px;
+    background-color: #4D7C0F;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    box-sizing: border-box;
+    height: 38px; /* Adjusted to match input exact height */
+    margin-bottom: 12px; /* Match the input's margin-bottom */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.apply-btn:hover {
+    background-color: #3F6C0F;
+}
+
+/* Adjust form-grid for the promo code section */
+.checkout-section .form-grid {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 12px;
+    align-items: flex-start;
 }
 
 /* Improve textarea appearance */
