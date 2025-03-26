@@ -1,0 +1,32 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
+<!DOCTYPE sales_report [
+<!ELEMENT sales_report (total_revenue, top_selling_products, daily_sales, weekly_sales, monthly_sales)>
+
+<!-- Total Revenue Section -->
+<!ELEMENT total_revenue (#PCDATA)>
+
+<!-- Top Selling Products Section -->
+<!ELEMENT top_selling_products (product+)>
+<!ELEMENT product (product_name, total_quantity_sold, total_revenue)>
+<!ELEMENT product_name (#PCDATA)>
+<!ELEMENT total_quantity_sold (#PCDATA)>
+<!ELEMENT total_revenue (#PCDATA)>
+
+<!-- Daily Sales Section -->
+<!ELEMENT daily_sales (sale+)>
+<!ELEMENT sale (sale_date, daily_revenue)>
+<!ELEMENT sale_date (#PCDATA)>
+<!ELEMENT daily_revenue (#PCDATA)>
+
+<!-- Weekly Sales Section -->
+<!ELEMENT weekly_sales (sale+)>
+<!ELEMENT sale (sale_week, weekly_revenue)>
+<!ELEMENT sale_week (#PCDATA)>
+<!ELEMENT weekly_revenue (#PCDATA)>
+
+<!-- Monthly Sales Section -->
+<!ELEMENT monthly_sales (sale+)>
+<!ELEMENT sale (sale_month, monthly_revenue)>
+<!ELEMENT sale_month (#PCDATA)>
+<!ELEMENT monthly_revenue (#PCDATA)>
+]>

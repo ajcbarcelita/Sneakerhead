@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sneakerheads Admin</title>
-    <link rel="stylesheet" href="Server_Products.css">
+    <link rel="stylesheet" href="show_reports.css">
 </head>
 
 <body>
-
     <header>
         <h1>SNEAKERHEADS (Server Side)</h1>
         <nav>
-            <a href="Server_Products.php">Products</a>
+            <a href="server_product.php">Products</a>
             <a href="#">Promo Codes</a>
             <a href="#">Reports</a>
             <button class="sign-in">Sign Out</button>
@@ -20,6 +20,14 @@
     </header>
 
     <?php
+    include 'db_conn.php';
+    include 'generate_reports.php';
+
+    // Generate both XML reports before showing details
+    generateSalesReport($conn);
+    generateInventoryReport($conn);
+
+    // Display Inventory Report
     $xmlFile = 'BackEnd/inventory_report.xml';
 
     if (file_exists($xmlFile)) {
@@ -84,8 +92,7 @@
     }
 
     // Sales Report Section
-    echo '<hr><h2>~ Sales Report ~</h2>';
-
+    echo '<h2>~ Sales Report ~</h2>';
     $salesXmlFile = 'BackEnd/sales_report.xml';
 
     if (file_exists($salesXmlFile)) {
@@ -96,7 +103,7 @@
         } else {
             // Display total revenue
             echo '<div class="sales-section">';
-            echo '<h3>Total Revenue: ₱' . number_format((float)$salesXml->total_revenue, 2) . '</h3>';
+            echo '<div class="sales-header"><h3>Total Revenue: ₱' . number_format((float)$salesXml->total_revenue, 2) . '</h3></div>';
 
             // Display top-selling products
             echo '<h3>Top Selling Products</h3>';
@@ -154,4 +161,5 @@
     ?>
 
 </body>
+
 </html>

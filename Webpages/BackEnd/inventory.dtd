@@ -1,0 +1,13 @@
+<?xml version = "1.0" encoding = "UTF-8" standalone = "yes"?>
+<!DOCTYPE inventory [
+    <!ELEMENT inventory (shoe*)>
+    <!ELEMENT shoe (brand, name, price, sizes)>
+    <!ELEMENT brand (#PCDATA)>
+    <!ELEMENT name (#PCDATA)>
+    <!ELEMENT price (#PCDATA)>
+    <!ELEMENT sizes (size*)>
+    <!ELEMENT size (us_size, stock)>
+    <!ELEMENT us_size (#PCDATA)>
+    <!ELEMENT stock (#PCDATA)>
+]>
+

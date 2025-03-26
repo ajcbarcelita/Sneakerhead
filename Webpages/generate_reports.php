@@ -1,7 +1,68 @@
 <?php
-require 'database_conn.php'; // Include database connection
 
-// Function to generate XML sales report
+/**
+ * Generate the XML Inventory report
+ */
+function generateInventoryReport($conn)
+{
+    // Fetch inventory data with grouped sizes
+    // Concatenates size and stock for each shoe
+    $query = "
+        SELECT 
+            s.id AS shoe_id,
+            s.brand,
+            s.name,
+            s.price,
+            GROUP_CONCAT(
+                CONCAT(
+                    '<size>',
+                    '<us_size>', i.shoe_us_size, '</us_size>',
+                    '<stock>', i.stock, '</stock>',
+                    '</size>'
+                )
+            ) AS sizes
+        FROM 
+            shoe_size_inventory i
+        JOIN 
+            shoes s ON i.shoe_id = s.id
+        GROUP BY 
+            s.id
+        ORDER BY 
+            s.brand, s.name;
+    ";
+    $result = $conn->query($query);
+
+    // Create XML structure
+    $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><inventory></inventory>');
+
+    // DTD declaration
+    $xml->addAttribute('dtd:noNamespaceSchemaLocation', 'inventory.dtd');
+
+    // Add shoes to XML
+    while ($row = $result->fetch_assoc()) {
+        $shoe = $xml->addChild('shoe');
+        $shoe->addChild('brand', htmlspecialchars($row['brand']));
+        $shoe->addChild('name', htmlspecialchars($row['name']));
+        $shoe->addChild('price', htmlspecialchars($row['price']));
+
+        // Sizes element to contain --> size and stock for shoe
+        $sizes = $shoe->addChild('sizes');
+        // Converts concatenated 'sizes' string to XML 
+        $size_xml = simplexml_load_string("<sizes>{$row['sizes']}</sizes>");
+        foreach ($size_xml->size as $size) {
+            $size_element = $sizes->addChild('size');
+            $size_element->addChild('us_size', (string)$size->us_size);
+            $size_element->addChild('stock', (string)$size->stock);
+        }
+    }
+
+    // Save XML to file
+    $xml->asXML('BackEnd/inventory_report.xml');
+}
+
+/**
+ * Generate the XML Sales Report
+ */
 function generateSalesReport($conn)
 {
     // Produces detailed sales summaries (daily/weekly/monthly) using MySQL queries. 
@@ -88,11 +149,4 @@ function generateSalesReport($conn)
 
     // Save XML to file
     $xml->asXML('BackEnd/sales_report.xml');
-
-    echo "Sales report generated successfully.";
 }
-
-// Generate the sales report
-generateSalesReport($conn);
-
-$conn->close();
