@@ -118,7 +118,7 @@ unset($_SESSION['promo_message'], $_SESSION['promo_error']);
                 <a href="index.php" class="nav-link">Home</a>
                 <a href="index.php#products" class="nav-link">Shop</a>
                 <a href="profile_page.php" class="nav-link">My Profile</a>
-                <a href="logout.php" class="log-out-btn">Log out</a>
+                <a href="logout-handler.php" class="log-out-btn">Log out</a>
             </nav>
         </div>
     </header>

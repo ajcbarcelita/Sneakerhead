@@ -41,7 +41,7 @@ $selected_brand = $_GET['brand'] ?? '';
             <li><a href="Checkout.php">Check Out</a></li>
             <li><a href="profile_page.php">My Profile</a></li>
             <li><a href="cart.php">Cart</a></li>
-            <li><a href="login.php" class="btn">Sign Out</Out></a></li>
+            <li><a href="logout-handler.php" class="btn">Sign Out</a></li>
         </ul>
     </nav>
 

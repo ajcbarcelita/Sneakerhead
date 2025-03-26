@@ -17,7 +17,7 @@
             <a href="index.php">Home</a>
             <a href="shop.php">Shop</a>
             <a href="Checkout.php">Check Out</a>
-            <button class="sign-out">Sign Out</button>
+            <button class="sign-out" onclick="location.href='logout-handler.php'">Sign Out</button>
         </nav>
     </header>
 
