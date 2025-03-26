@@ -28,8 +28,9 @@
     $img = "SELECT * FROM shoe_images WHERE shoe_id='".$id."'";
     $review = "SELECT * FROM shoe_reviews WHERE shoe_id='".$id."'";
 
+    $avg = $conn->query("SELECT AVG(rating) FROM shoe_reviews WHERE shoe_id='".$id."'")->fetch_array()[0];
     $r_num = $conn->query("SELECT COUNT(*) FROM shoe_reviews WHERE shoe_id='".$id."'")->fetch_array()[0];
-    $inv = $conn->query("SELECT shoe_us_size, stock FROM shoe_size_inventory WHERE shoe_id='".$id."' AND stock > 0");
+    $inv = $conn->query("SELECT shoe_us_size, stock FROM shoe_size_inventory WHERE shoe_id='".$id."'");
 
     $size = array();
     $sales = array();
@@ -53,10 +54,10 @@
 <head>
     <!-- Dynamic title -->
     <title><?php echo $conn->query($info)->fetch_assoc()["name"]; ?> | Sneakerheads</title>
-    <link href="https://fonts.googleapis.com/css?family=Newsreader&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Newsreader&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
     <style>
-        .alt, #max {
+        .alt, .noadd, #max {
             display: none;
         }
         @media only screen and (max-width: 900px) {
@@ -121,7 +122,7 @@
         header, section {
             margin-top: 50px;
         }
-        header, h1, h2, #empty {
+        header, h1, h2, #empty, #quantity {
             text-align: center;
         }
         img {
@@ -130,7 +131,7 @@
         .image {
             position: relative;
         }
-        .soldout {
+        #soldout {
             position: absolute;
             display: inline;
             background-color: red;
@@ -157,6 +158,12 @@
         #quantity {
             width: 3%;
         }
+        h2 {
+            font-family: Newsreader;
+        }
+        .noadd {
+            background-color: black;
+        }
     </style>
 </head>
 <body>
@@ -172,7 +179,7 @@
         <h1><?php echo $conn->query($info)->fetch_assoc()["name"]; ?></h1>
         <p><?php
             if ($r_num) {
-                echo "5.0/5 (".$r_num." review";
+                echo $avg."/5 (".$r_num." review";
                 if ($r_num > 1)
                     echo "s";
                 echo ")";
@@ -183,19 +190,14 @@
     </header>
     <section id="product">
         <div class="image">
-            <img src="<?php echo $conn->query($img)->fetch_assoc()["file_path"]; ?>" alt="Close-up view of the shoe">
-            <?php
-                if (!count($size))
-                    echo "<span class=\"soldout\">SOLD OUT</span>";
-            ?>
+            <img src="<?php echo $conn->query($img)->fetch_assoc()["file_path"]; ?>" alt="A close-up view of the shoe">
+            <span id="soldout">SOLD OUT</span>
         </div>
         <ul>
             <li class="price">PHP <?php echo $conn->query($info)->fetch_assoc()["price"]; ?></li>
             <li class="wide button add">Add to Cart</li>
-            <?php
-                for ($i = 0; $i < count($size); $i++)
-                    echo "<li class=\"wide inv\">".$sales[$i]." sold, ".$stock[$i]." in stock</li>";
-            ?>
+            <li class="wide button noadd">Sold Out</li>
+            <li class="wide inv"><span class="sales"></span> sold, <span class="stock"></span> in stock</li>
             <?php
                 for ($i = count($size)-1; $i >= 0; $i--)
                     echo "<li class=\"wide button size right\">".$size[$i]."</li>";
@@ -204,10 +206,8 @@
         </ul>
         <ul class="alt">
             <li class="button add">Add to Cart</li>
-            <?php
-                for ($i = 0; $i < count($size); $i++)
-                    echo "<li class=\"inv1\">".$sales[$i]." sold, ".$stock[$i]." in stock</li>";
-            ?>
+            <li class="button noadd">Sold Out</li>
+            <li class="inv1"><span class="sales"></span> sold, <span class="stock"></span> in stock</li>
         </ul>
         <p class="alt">Select a size</p>
         <ul class="alt">
@@ -216,9 +216,9 @@
                     echo "<li class=\"button size1\">".$size[$i]."</li>";
             ?>
         </ul>
-        <ul>
+        <ul id="qtyselect">
             <li>Quantity</li>
-            <li id="quantity">1</li>
+            <li id="quantity"></li>
             <li class="button quantity">+</li>
             <li class="button quantity">-</li>
             <li id="max">Maximum limit reached</li>
@@ -247,20 +247,28 @@
         let selected_size = 0;
         let qty = 1;
 
-        const limit = [<?php
+        // Dynamically set arrays
+        const sales = [<?php
+            for ($i = 0; $i < count($size); $i++)
+                echo $sales[$i].",";
+        ?>null];
+        const stock = [0,<?php
             for ($i = 0; $i < count($size); $i++)
                 echo $stock[$i].",";
         ?>null];
 
-        const xhttp = new XMLHttpRequest();
+        // DOM
         const a = document.getElementsByClassName("add");
-        const i = document.getElementsByClassName("inv");
-        const i1 = document.getElementsByClassName("inv1");
+        const i = document.getElementsByClassName("sales");
+        const i1 = document.getElementsByClassName("stock");
         const m = document.getElementById("max");
+        const n = document.getElementsByClassName("noadd");
         const s = document.getElementsByClassName("size");
         const s1 = document.getElementsByClassName("size1");
+        const so = document.getElementById("soldout");
         const q = document.getElementsByClassName("quantity");
         const qd = document.getElementById("quantity");
+        const qs = document.getElementById("qtyselect");
         const s_len = s.length;
 
         // Event listeners
@@ -280,7 +288,7 @@
         }
 
         q[0].addEventListener("click", function() {
-            if (qty < limit[selected_size]) {
+            if (qty < stock[selected_size]) {
                 qty++;
                 qd.innerHTML = qty;
             }
@@ -295,12 +303,34 @@
             }
         });
 
+        // Button functions
         function setSize(size) {
             selected_size = size;
             qty = 1;
-            displayInv(size);
-            m.style.display = "";
             qd.innerHTML = qty;
+            m.style.display = "";
+
+            for (let j = 0; j < 2; j++) {
+                i[j].innerHTML = sales[size];
+                i1[j].innerHTML = stock[size];
+            }
+
+            if (!stock[size]) {
+                so.style.display = "block";
+                qs.style.display = "none";
+                for (let j = 0; j < 2; j++) {
+                    a[j].style.display = "none";
+                    n[j].style.display = "block";
+                }
+            }
+            else {
+                so.style.display = "none";
+                qs.style.display = "";
+                for (let j = 0; j < 2; j++) {
+                    a[j].style.display = "";
+                    n[j].style.display = "";
+                }
+            }
 
             for (let j = 0; j < s_len; j++) {
                 if (j == size) {
@@ -318,22 +348,7 @@
             alert("Adding to cart is not yet implemented. Size is " + selected_size);
         }
 
-        function displayInv(size) {
-            for (let j = 0; j < s_len; j++) {
-                if (j == size) {
-                    i[j].style.display = "";
-                    i1[j].style.display = "";
-                }
-                else {
-                    i[j].style.display = "none";
-                    i1[j].style.display = "none";
-                }
-            }
-        }
-
         setSize(0);
-        displayInv(0);
-
     </script>
 </body>
 </html>
