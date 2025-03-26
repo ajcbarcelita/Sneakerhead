@@ -37,7 +37,7 @@
     <!-- QUERY TO UPDATE PROFILE & SEE ORDER HISTORY -->
     <?php
     //session_start();
-    include 'database_conn.php';
+    include 'db_conn.php';
 
     // if (!isset($_SESSION['user_id'])) {
     //     // Redirect to login page if user is not logged in
