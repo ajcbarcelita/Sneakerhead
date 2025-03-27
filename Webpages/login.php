@@ -20,6 +20,11 @@
                 echo "<p class='error-message'>" . htmlspecialchars($_SESSION["error"]) . "</p>";
                 unset($_SESSION["error"]); // Clear error after displaying it
             }
+            // Display success messages (e.g., logout success)
+            if (isset($_SESSION["message"])) {
+                echo "<p class='logout-message'>" . htmlspecialchars($_SESSION["message"]) . "</p>";
+                unset($_SESSION["message"]); // Clear message after displaying it
+            }
         ?>
         <!-- Login form -->
         <form id="login-form" method="post" action="login-handler.php">

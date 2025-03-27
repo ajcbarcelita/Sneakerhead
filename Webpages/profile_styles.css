@@ -9,8 +9,9 @@ header {
 
 .brand {
     font-family: 'Newsreader';
-    color: #426B1F;
-    font-size: 32px;
+    font-size: 20px;
+    font-weight: bold; /* Ensure the logo is bold */
+    color: #426B1F; /* Match the color from checkout */
 }
 
 nav {
@@ -170,6 +171,7 @@ input[type="checkbox"] {
     border-radius: 8px;
     width: 100%;
 }
+
 
 /* Input Box */
 .input-container input {

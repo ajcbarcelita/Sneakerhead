@@ -14,10 +14,11 @@
         <div class="brand">SNEAKERHEADS</div>
         <!-- Other Panels -->
         <nav>
-            <a href="index.php">Home</a>
-            <a href="shop.php">Shop</a>
-            <a href="Checkout.php">Check Out</a>
-            <button class="sign-out">Sign Out</button>
+        <li><a href="index.php">Home</a></li>
+            <li><a href="Checkout.php">Check Out</a></li>
+            <li><a href="profile_page.php">My Profile</a></li>
+            <li><a href="cart.php">Cart</a></li>
+            <button class="sign-out" onclick="location.href='logout-handler.php'">Sign Out</button>
         </nav>
     </header>
 
@@ -36,17 +37,19 @@
 
     <!-- QUERY TO UPDATE PROFILE & SEE ORDER HISTORY -->
     <?php
-    //session_start();
     include 'db_conn.php';
+    session_start();
 
-    // if (!isset($_SESSION['user_id'])) {
-    //     // Redirect to login page if user is not logged in
-    //     header("Location: login.php");
-    //     exit();
-    // }
+    if (!isset($_SESSION['id'])) {
+        header("Location: login.php");
+        exit();
+    }
 
-    // $id = $_SESSION['user_id'];
-    $id = 3;
+    // Get user ID from session
+    $id = $_SESSION['id'];
+
+    // Testing purpose
+    // $id = 3;
 
     //SELECT QUERY FOR PROFILE DETAILS
     $sql = "SELECT username, fname, lname, phone_no, email, pw_hash, address_line, province, city_municipality
@@ -64,35 +67,53 @@
     // POST METHOD FOR UPDATING PROFILE DETAILS
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update'])) {
 
-        // Check if each field is empty, if so, keep the original value
-        $username = empty($_POST['username']) ? $profile['username'] : $_POST['username'];
-        $fname = empty($_POST['fname']) ? $profile['fname'] : $_POST['fname'];
-        $lname = empty($_POST['lname']) ? $profile['lname'] : $_POST['lname'];
-        $phone_no = empty($_POST['phone_no']) ? $profile['phone_no'] : $_POST['phone_no'];
-        $email = empty($_POST['email']) ? $profile['email'] : $_POST['email'];
-        $address_line = empty($_POST['address_line']) ? $profile['address_line'] : $_POST['address_line'];
-        $province = empty($_POST['province']) ? $profile['province'] : $_POST['province'];
-        $city_municipality = empty($_POST['city_municipality']) ? $profile['city_municipality'] : $_POST['city_municipality'];
+        // Sanitize and validate inputs -- If empty, the original value from db is used. If not empty, the new value is used (trimmed and sanitized).
+        $username = empty($_POST['username']) ? $profile['username'] : htmlspecialchars(trim($_POST['username']));
+        $fname = empty($_POST['fname']) ? $profile['fname'] : htmlspecialchars(trim($_POST['fname']));
+        $lname = empty($_POST['lname']) ? $profile['lname'] : htmlspecialchars(trim($_POST['lname']));
+        $phone_no = empty($_POST['phone_no']) ? $profile['phone_no'] : htmlspecialchars(trim($_POST['phone_no']));
+        $email = empty($_POST['email']) ? $profile['email'] : filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
+        $address_line = empty($_POST['address_line']) ? $profile['address_line'] : htmlspecialchars(trim($_POST['address_line']));
+        $province = empty($_POST['province']) ? $profile['province'] : htmlspecialchars(trim($_POST['province']));
+        $city_municipality = empty($_POST['city_municipality']) ? $profile['city_municipality'] : htmlspecialchars(trim($_POST['city_municipality']));
+        $new_password = trim($_POST['pw_hash']);
 
-        $new_password = $_POST['pw_hash'];
-        if (empty($new_password))
-            $pw_hash = $profile['pw_hash'];
-        else
-            $pw_hash = password_hash($new_password, PASSWORD_DEFAULT);
+        // Validate inputs
+        $errors = [];
+        if (!empty($username) && strlen($username) < 3)
+            $errors[] = "Username must be at least 3 characters long.";
+        if (!empty($fname) && !preg_match("/^[a-zA-Z\s]+$/", $fname))
+            $errors[] = "First name can only contain letters and spaces.";
+        if (!empty($lname) && !preg_match("/^[a-zA-Z\s]+$/", $lname))
+            $errors[] = "Last name can only contain letters and spaces.";
+        if (!empty($phone_no) && !preg_match("/^\d{10,15}$/", $phone_no))
+            $errors[] = "Phone number must be between 10 and 15 digits.";
+        if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL))
+            $errors[] = "Invalid email address.";
+        if (!empty($new_password) && strlen($new_password) < 8)
+            $errors[] = "Password must be at least 8 characters long.";
 
-        $sql = "UPDATE users 
+        // If there are errors, just reload the page
+        if (!empty($errors))
+            header("refresh:2; url=profile_page.php");
+        else {
+            // If no errors, hash the password (if provided) and update the db
+            $pw_hash = empty($new_password) ? $profile['pw_hash'] : password_hash($new_password, PASSWORD_DEFAULT);
+
+            $sql = "UPDATE users 
                 SET username = ?, fname = ?, lname = ?, phone_no = ?, email = ?, pw_hash = ?, address_line = ?, province = ?, city_municipality = ? 
                 WHERE id = ? AND is_deleted = 0";
 
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssssssi", $username, $fname, $lname, $phone_no, $email, $pw_hash, $address_line, $province, $city_municipality, $id);
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("sssssssssi", $username, $fname, $lname, $phone_no, $email, $pw_hash, $address_line, $province, $city_municipality, $id);
 
-        if ($stmt->execute())
-            header("refresh:2; url=profile_page.php");
-        else
-            echo "Error updating record: " . $stmt->error;
+            if ($stmt->execute())
+                header("refresh:2; url=profile_page.php");
+            else
+                echo "Error updating record: " . $stmt->error;
 
-        $stmt->close();
+            $stmt->close();
+        }
     }
 
     // SELECT QUERY FOR ORDER HISTORY
@@ -190,10 +211,6 @@
                         <label for="pw_hash">Password:</label>
                         <div class="input-container">
                             <input type="password" name="pw_hash" placeholder="Enter New Password.">
-                            <span class="curr-value" data-original="<?php echo $profile['pw_hash']; ?>">**********</span>
-                            <input type="checkbox" id="toggle-password" class="toggle">
-                            <label for="toggle-password" class="eye-icon"></label>
-
                         </div>
                     </div>
 

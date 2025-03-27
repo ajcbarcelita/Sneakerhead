@@ -1,21 +1,15 @@
 <?php
 session_start();
+// Removed clearing of promo code-related session data
 require "db_conn.php";
-
-// Note: Remove this comment if login.php is fully implemented!
-// user authentication off for now. 
-/*
+require_once 'promo_code_handler.php'; // Updated file name
+// I removed the comment for hiding the login part of the page
 if (!isset($_SESSION['id'])) {
     // Redirect to login page if not logged in
     header("Location: login.php");
     exit();
 }
-*/
 
-// This where I set a test user ID for simulation purpose
-if (!isset($_SESSION['id'])) {
-    $_SESSION['id'] = 2; // existing user ID from the database database
-}
 $user_id = $_SESSION['id'];
 $user_query = "SELECT * FROM users WHERE id = ?";
 $stmt = $conn->prepare($user_query);
@@ -90,6 +84,16 @@ $errors = isset($_SESSION['checkoutErrors']) ? $_SESSION['checkoutErrors'] : [];
 if (!empty($errors)) {
     unset($_SESSION['checkoutErrors']);
 }
+
+$promo_code = isset($_SESSION['promo_code']) ? $_SESSION['promo_code'] : '';
+$discount = isset($_SESSION['discount']) ? $_SESSION['discount'] : 0;
+$promo_message = isset($_SESSION['promo_message']) ? $_SESSION['promo_message'] : '';
+$promo_error = isset($_SESSION['promo_error']) ? $_SESSION['promo_error'] : '';
+$new_total = $subtotal + $shipping - $discount;
+$_SESSION['total_amount'] = $new_total; // Save total amount in session
+
+// Clear promo messages after displaying
+unset($_SESSION['promo_message'], $_SESSION['promo_error']);
 ?>
 
 <!DOCTYPE html>
@@ -107,17 +111,16 @@ if (!empty($errors)) {
 
 <body>
     <!-- Header -->
-    <header>
-        <div class="header-container">
-            <h1 class="site-title">SNEAKERHEADS</h1>
-            <nav>
-                <a href="index.php" class="nav-link">Home</a>
-                <a href="index.php#products" class="nav-link">Shop</a>
-                <a href="profile_page.php" class="nav-link">My Profile</a>
-                <a href="logout.php" class="log-out-btn">Log out</a>
-            </nav>
-        </div>
-    </header>
+    <nav class="navbar">
+        <div class="logo" style="font-family: 'Newsreader'; color: #426B1F;">SNEAKERHEADS</div>
+        <ul class="nav-links">
+            <li><a href="index.php">Home</a></li>
+            <li><a href="Checkout.php">Check Out</a></li>
+            <li><a href="profile_page.php">My Profile</a></li>
+            <li><a href="cart.php">Cart</a></li>
+            <li><a href="logout-handler.php" class="btn">Sign Out</a></li>
+        </ul>
+    </nav>
 
     <div class="main-container">
         <h1 class="page-title">Check out</h1>
@@ -168,13 +171,10 @@ if (!empty($errors)) {
                     <!-- Billing Address -->
                     <div class="checkout-section">
                         <h2 class="section-title">Billing Address</h2>
-                        <div class="radio-button">
+                        <div class="radio-button" style="opacity: 0.7;">
                             <input type="radio" name="billing" value="same" checked>
                             <span>Same as shipping address</span>
-                        </div>
-                        <div class="radio-button">
-                            <input type="radio" name="billing" value="different">
-                            <span>Use different billing address</span>
+                            <input type="hidden" name="billing" value="same">
                         </div>
                     </div>
 
@@ -182,13 +182,9 @@ if (!empty($errors)) {
                     <div class="checkout-section">
                         <h2 class="section-title">Delivery</h2>
                         <div class="radio-section">
-                            <div class="radio-button">
+                        <div class="radio-button" style="opacity: 0.7;">
                                 <input type="radio" name="delivery" value="ship" checked>
                                 <span>Ship/Deliver</span>
-                            </div>
-                            <div class="radio-button">
-                                <input type="radio" name="delivery" value="pickup">
-                                <span>Pickup in Store</span>
                             </div>
                         </div>
 
@@ -239,27 +235,14 @@ if (!empty($errors)) {
                     <div class="checkout-section">
                         <h2 class="section-title">Promo Code</h2>
                         <div class="form-grid">
-                            <input type="text" name="promo_code" id="promo_code" placeholder="Enter Promo Code"
-                                class="form-input">
-                            <button type="button" id="apply-promo" class="apply-btn">Apply</button>
+                            <input type="text" name="promo_code" placeholder="Enter Promo Code" class="form-input" value="<?php echo htmlspecialchars($promo_code); ?>">
+                            <button type="submit" name="apply_promo" value="1" class="apply-btn">Apply</button>
                         </div>
-                        <p id="promo-message" class="promo-message"></p>
-                        <input type="hidden" name="discount_amount" id="discount_amount" value="0">
-                    </div>
-
-                    <!-- Payment -->
-                    <div class="checkout-section">
-                        <h2 class="section-title">Payment</h2>
-                        <div class="form-grid">
-                            <div class="radio-button radio-button-full">
-                                <input type="radio" name="payment" value="bank" checked>
-                                <span>Bank Deposit</span>
-                            </div>
-                            <div class="radio-button radio-button-full">
-                                <input type="radio" name="payment" value="gcash">
-                                <span>GCash</span>
-                            </div>
-                        </div>
+                        <?php if (!empty($promo_error)): ?>
+                            <p class="error-message"><?php echo $promo_error; ?></p>
+                        <?php elseif (!empty($promo_code)): ?>
+                            <p class="success-message">Promo code applied successfully! Discount: ₱<?php echo number_format($discount, 2); ?></p>
+                        <?php endif; ?>
                     </div>
                 </form>
             </div>
@@ -274,17 +257,14 @@ if (!empty($errors)) {
                             <div class="product-item">
                                 <div class="product-details">
                                     <div class="product-image-container">
-                                        <img src="<?php echo $item['image_path']; ?>" alt="<?php echo $item['name']; ?>"
-                                            class="product-image">
+                                        <img src="<?php echo $item['image_path']; ?>" alt="<?php echo $item['name']; ?>" class="product-image">
                                     </div>
                                     <div>
                                         <h3 class="product-name"><?php echo $item['name']; ?></h3>
-                                        <p class="product-quantity">Size: <?php echo $item['shoe_us_size']; ?> | Quantity:
-                                            <?php echo $item['quantity']; ?></p>
+                                        <p class="product-quantity">Size: <?php echo $item['shoe_us_size']; ?> | Quantity: <?php echo $item['quantity']; ?></p>
                                     </div>
                                 </div>
-                                <p class="product-price"> ₱
-                                    <?php echo number_format($item['price_at_addition'] * $item['quantity'], 2); ?></p>
+                                <p class="product-price"> ₱<?php echo number_format($item['price_at_addition'] * $item['quantity'], 2); ?></p>
                             </div>
                         <?php endforeach; ?>
 
@@ -303,148 +283,57 @@ if (!empty($errors)) {
                         <span>Shipping</span>
                         <span id="shipping">₱<?php echo number_format($shipping, 2); ?></span>
                     </div>
-                    <div class="summary-row" id="discount-row" style="display: none;">
-                        <span>Discount</span>
-                        <span id="discount">-₱0.00</span>
-                    </div>
+                    <?php if ($discount > 0): ?>
+                        <div class="summary-row">
+                            <span>Discount</span>
+                            <span id="discount">-₱<?php echo number_format($discount, 2); ?></span>
+                        </div>
+                    <?php endif; ?>
                     <div class="total-row">
                         <span>TOTAL</span>
-                        <span id="total">₱<?php echo number_format($subtotal + $shipping, 2); ?></span>
+                        <span id="total">₱<?php echo number_format($new_total, 2); ?></span>
                     </div>
                 </div>
-
-                <button type="submit" class="complete-order-btn" form="checkout-form" <?php echo count($cart_items) == 0 ? 'disabled' : ''; ?>>
+                <button type="submit" class="complete-order-btn" form="checkout-form" formaction="complete_order_handler.php" <?php echo count($cart_items) == 0 ? 'disabled' : ''; ?>>
                     Complete Order
                 </button>
             </div>
         </div>
     </div>
-
     <script>
-        // Form validation
-        document.getElementById('checkout-form').addEventListener('submit', function (e) {
-            let hasErrors = false;
-            const delivery = document.querySelector('input[name="delivery"]:checked').value;
-
-            // Only validate shipping info if delivery type is "ship"
-            if (delivery === 'ship') {
-                const requiredFields = ['firstName', 'lastName', 'address', 'city', 'province'];
-
-                requiredFields.forEach(field => {
-                    const input = document.querySelector(`input[name="${field}"]`);
-                    if (!input.value.trim()) {
-                        hasErrors = true;
-                        // Add error styling
-                        input.style.borderColor = 'red';
-                    } else {
-                        input.style.borderColor = '';
-                    }
-                });
-            }
-
-            // Validate email
-            const email = document.querySelector('input[name="email"]');
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email.value)) {
-                hasErrors = true;
-                email.style.borderColor = 'red';
-            } else {
-                email.style.borderColor = '';
-            }
-
-            // Validate phone
-            const phone = document.querySelector('input[name="phone"]');
-            const phonePattern = /^[0-9+\-\s]+$/;
-            if (!phonePattern.test(phone.value)) {
-                hasErrors = true;
-                phone.style.borderColor = 'red';
-            } else {
-                phone.style.borderColor = '';
-            }
-
-            if (hasErrors) {
-                e.preventDefault();
-                alert('Please fill out all required fields correctly.');
-            } else {
-                // Show processing state
-                const completeOrderBtn = document.querySelector('.complete-order-btn');
-                completeOrderBtn.textContent = 'Processing...';
-                completeOrderBtn.disabled = true;
-
-                // Add subtotal and shipping as hidden fields if not already present
-                if (!document.querySelector('input[name="subtotal"]')) {
-                    const subtotalInput = document.createElement('input');
-                    subtotalInput.type = 'hidden';
-                    subtotalInput.name = 'subtotal';
-                    subtotalInput.value = '<?php echo $subtotal; ?>';
-                    document.getElementById('checkout-form').appendChild(subtotalInput);
-                }
-
-                if (!document.querySelector('input[name="shipping"]')) {
-                    const shippingInput = document.createElement('input');
-                    shippingInput.type = 'hidden';
-                    shippingInput.name = 'shipping';
-                    shippingInput.value = '<?php echo $shipping; ?>';
-                    document.getElementById('checkout-form').appendChild(shippingInput);
-                }
-
-                // Continue with form submission
-                return true;
-            }
-        });
-
-        // Promo code functionality
-        document.getElementById('apply-promo').addEventListener('click', function () {
-            const promoCode = document.getElementById('promo_code').value;
-            const promoMessage = document.getElementById('promo-message');
+        document.querySelector('.apply-btn').addEventListener('click', function (e) {
+            e.preventDefault();
+            const promoCode = document.querySelector('input[name="promo_code"]').value.trim();
             const subtotal = <?php echo $subtotal; ?>;
             const shipping = <?php echo $shipping; ?>;
 
             if (!promoCode) {
-                promoMessage.textContent = 'Please enter a promo code';
-                promoMessage.style.color = 'red';
+                alert('Please enter a promo code.');
                 return;
             }
 
-            // Send AJAX request to validate promo code
-            fetch('checkout-handler.php?action=validate_promo', {
+            fetch('checkout-handler.php', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'promo_code=' + encodeURIComponent(promoCode) + '&subtotal=' + subtotal
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `apply_promo=1&promo_code=${encodeURIComponent(promoCode)}&subtotal=${subtotal}`
             })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.valid) {
-                        // Show success message
-                        promoMessage.textContent = data.message;
-                        promoMessage.style.color = 'green';
-
-                        // Update discount and total
-                        document.getElementById('discount-row').style.display = 'flex';
-                        document.getElementById('discount').textContent = '-₱' + data.discount.toFixed(2);
-                        document.getElementById('total').textContent = '₱' + data.new_total.toFixed(2);
-
-                        // Update hidden field with discount info
-                        document.getElementById('discount_amount').value = data.discount;
-                    } else {
-                        // Show error message
-                        promoMessage.textContent = data.message;
-                        promoMessage.style.color = 'red';
-
-                        // Reset discount and total
-                        document.getElementById('discount-row').style.display = 'none';
-                        document.getElementById('total').textContent = '₱' + (subtotal + shipping).toFixed(2);
-                        document.getElementById('discount_amount').value = '0';
-                    }
-                })
-                // This will occur if promo code doesn't match
-                .catch(error => {
-                    console.error('Error validating promo code:', error);
-                    promoMessage.textContent = 'An error occurred. Please try again.';
-                    promoMessage.style.color = 'red';
-                });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.valid) {
+                    location.reload(); // Reload the page on success
+                } else {
+                    location.reload(); // Reload the page on error
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while applying the promo code. Please try again.');
+            });
         });
     </script>
 </body>

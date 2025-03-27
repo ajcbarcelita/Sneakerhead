@@ -171,14 +171,18 @@
             background-color: black;
         }
     </style>
+    <link rel="stylesheet" href="product.css">
 </head>
 <body>
-    <nav>
-        <ul class="main">
-            <li class="logo fl"><a href=".">SNEAKERHEADS</a></div>
-            <li class="button right">Log Out</li>
-            <li class="right"><a href="#news">Cart (0)</a></li><!-- Add PHP -->
-            <li class="right"><a href="#contact">Account</a></li>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">SNEAKERHEADS</div>
+        <ul class="nav-links">
+            <li><a href="index.php">Home</a></li>
+            <li><a href="Checkout.php">Check Out</a></li>
+            <li><a href="profile_page.php">My Profile</a></li>
+            <li><a href="cart.php">Cart</a></li>
+            <li><a href="logout-handler.php" class="btn">Sign Out</a></li>
         </ul>
     </nav>
     <!--<header>
