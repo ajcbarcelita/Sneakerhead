@@ -14,10 +14,11 @@
         <div class="brand">SNEAKERHEADS</div>
         <!-- Other Panels -->
         <nav>
-            <a href="index.php">Home</a>
-            <a href="shop.php">Shop</a>
-            <a href="Checkout.php">Check Out</a>
-            <button class="sign-out">Sign Out</button>
+        <li><a href="index.php">Home</a></li>
+            <li><a href="Checkout.php">Check Out</a></li>
+            <li><a href="profile_page.php">My Profile</a></li>
+            <li><a href="cart.php">Cart</a></li>
+            <button class="sign-out" onclick="location.href='logout-handler.php'">Sign Out</button>
         </nav>
     </header>
 

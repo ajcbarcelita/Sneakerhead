@@ -286,3 +286,41 @@ input[name="middleName"] {
     font-weight: bold; 
     font-size: 18px;
 }
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: white;
+}
+
+.logo {
+    font-family: 'Newsreader';
+    font-size: 20px;
+    font-weight: bold; /* Ensure the logo is bold */
+    color: #426B1F;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: black;
+}
+
+.nav-links a.btn {
+    color: white;
+}
+
+.btn {
+    background-color: #2f4f2f;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+}

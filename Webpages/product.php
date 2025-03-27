@@ -56,123 +56,18 @@
     <title><?php echo $conn->query($info)->fetch_assoc()["name"]; ?> | Sneakerheads</title>
     <link href="https://fonts.googleapis.com/css?family=Newsreader&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
-    <style>
-        .alt, .noadd, #max {
-            display: none;
-        }
-        @media only screen and (max-width: 900px) {
-            .wide {
-                display: none;
-            }
-            .alt {
-                display: block;
-            }
-            .price {
-            padding: 0;
-        }
-        }
-        body {
-            margin: 2% 5%;
-            font-family: Inter;
-        }
-        li {
-            margin: 0;
-            float: left;
-            padding: 14px 16px;
-        }
-        .logo, .price, h1, #quantity {
-            margin: 0;
-            font-family: Newsreader;
-            font-size: xx-large;
-        }
-        .logo a {
-            color: #426b1f;
-        }
-        .right {
-            float: right;
-        }
-        .button {
-            background-color: #426b1f;
-            border-radius: 8px;
-            color: white;
-            text-align: center;
-            cursor: pointer;
-            user-select: none;
-        }
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        nav li {
-            margin-left: 5%;
-        }
-        #product li, p.alt {
-            margin-left: 1%;
-            margin-top: 3%;
-        }
-        li a, li p {
-            margin: 0;
-            display: block;
-            text-align: center;
-            text-decoration: none;
-            color: black;
-        }
-        header, section {
-            margin-top: 50px;
-        }
-        header, h1, h2, #empty, #quantity {
-            text-align: center;
-        }
-        img {
-            width: 100%;
-        }
-        .image {
-            position: relative;
-        }
-        #soldout {
-            position: absolute;
-            display: inline;
-            background-color: red;
-            font-size: 80px;
-            text-align: center;
-            color: white;
-            width: 100%;
-            left: 0;
-            top: 50%;
-            transform: rotate(-20deg);
-        }
-        .review {
-            margin: 3% 0;
-        }
-        .review h3, .review span {
-            display: inline;
-        }
-        .review span {
-            margin-left: 10px;
-        }
-        #max {
-            color: red;
-        }
-        #quantity {
-            width: 3%;
-        }
-        h2 {
-            font-family: Newsreader;
-        }
-        .noadd {
-            background-color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="product.css">
 </head>
 <body>
-    <nav>
-        <ul class="main">
-            <li class="logo fl"><a href=".">SNEAKERHEADS</a></div>
-            <li class="button right">Log Out</li>
-            <li class="right"><a href="#news">Cart (0)</a></li><!-- Add PHP -->
-            <li class="right"><a href="#contact">Account</a></li>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">SNEAKERHEADS</div>
+        <ul class="nav-links">
+            <li><a href="index.php">Home</a></li>
+            <li><a href="Checkout.php">Check Out</a></li>
+            <li><a href="profile_page.php">My Profile</a></li>
+            <li><a href="cart.php">Cart</a></li>
+            <li><a href="logout-handler.php" class="btn">Sign Out</a></li>
         </ul>
     </nav>
     <header>

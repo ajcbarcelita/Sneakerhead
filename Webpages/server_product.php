@@ -38,7 +38,7 @@ require "BackEnd/sql_queries.php"; // Include the new file containing SQL script
             <a href="#">Products</a>
             <a href="#">Promo Codes</a>
             <a href="show_reports.php">Reports</a>
-            <button class="sign-in">Sign Out</button>
+            <button class="sign-in" onclick="window.location.href='logout-handler.php'">Sign Out</button> <!-- Updated button -->
         </nav>
     </header>
 
