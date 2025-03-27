@@ -21,7 +21,7 @@
             }
             if (isset($_SESSION["message"])) {
                 echo "<p class='logout-message'>" . htmlspecialchars($_SESSION["logout_message"]) . "</p>";
-                unset($_SESSION["logout_message"]); // Clear message after displaying it
+                unset($_SESSION["message"]); // Clear message after displaying it
             }
         ?>
         <!-- Signup form -->

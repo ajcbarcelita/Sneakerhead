@@ -35,14 +35,28 @@
         return preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password);
     }
     
-    function doesUserExist($conn, $username, $email) {
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-        $stmt->bind_param("ss", $username, $email);
+    /*
+        We use the 2 functions to check if the username or email already exists in the database
+        - doesUserNameExist($conn, $username)  
+        - doesEmailExist($conn, $email)
+
+        If either function returns true, we display an error message to the user and prevent registration.
+        It is policy that username and email must be unique.
+    */
+    function doesUserNameExist($conn, $username) {
+        $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
         $stmt->execute();
-        $stmt->store_result(); // Store the result to get the number of rows
-        $exists = $stmt->num_rows > 0;
-        $stmt->close();
-        return $exists;
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+
+    function doesEmailExist($conn, $email) {
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
 
     function registerUser($conn, $username, $email, $mobile_no, $pw_hash, $lname, $fname, $mname, $address, $city_municipality, $province) {
@@ -97,8 +111,8 @@
             header("Location: signup.php");
             exit();
         }
-
-        if (doesUserExist($conn, $username, $email)) {
+        
+        if (doesEmailExist($conn, $email) || doesUserNameExist($conn,$username)) {
             $_SESSION["error"] = "Error: Username or email must be unique.";
             header("Location: signup.php");
             exit();

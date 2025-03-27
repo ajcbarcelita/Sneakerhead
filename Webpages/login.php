@@ -22,8 +22,8 @@
             }
             // Display success messages (e.g., logout success)
             if (isset($_SESSION["message"])) {
-                echo "<p class='logout-message'>" . htmlspecialchars($_SESSION["logout_message"]) . "</p>";
-                unset($_SESSION["logout_message"]); // Clear message after displaying it
+                echo "<p class='logout-message'>" . htmlspecialchars($_SESSION["message"]) . "</p>";
+                unset($_SESSION["message"]); // Clear message after displaying it
             }
         ?>
         <!-- Login form -->
