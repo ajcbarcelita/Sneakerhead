@@ -26,11 +26,11 @@
 
     $info = "SELECT * FROM shoes WHERE id='".$id."'";
     $img = "SELECT * FROM shoe_images WHERE shoe_id='".$id."'";
-    $review = "SELECT * FROM shoe_reviews WHERE shoe_id='".$id."'";
 
-    $avg = $conn->query("SELECT AVG(rating) FROM shoe_reviews WHERE shoe_id='".$id."'")->fetch_array()[0];
+    $avg = $conn->query("SELECT FORMAT(AVG(rating), 1) FROM shoe_reviews WHERE shoe_id='".$id."'")->fetch_array()[0];
     $r_num = $conn->query("SELECT COUNT(*) FROM shoe_reviews WHERE shoe_id='".$id."'")->fetch_array()[0];
     $inv = $conn->query("SELECT shoe_us_size, stock FROM shoe_size_inventory WHERE shoe_id='".$id."'");
+    $review = $conn->query("SELECT CONCAT(users.fname, ' ', users.lname), shoe_reviews.updated_at, shoe_reviews.rating, shoe_reviews.review_text FROM shoe_reviews JOIN users ON shoe_reviews.user_id = users.id WHERE shoe_reviews.shoe_id = '".$id."'");
 
     $size = array();
     $sales = array();
@@ -46,9 +46,7 @@
         else
             $sales[] = $sum;
     }
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,122 +54,8 @@
     <title><?php echo $conn->query($info)->fetch_assoc()["name"]; ?> | Sneakerheads</title>
     <link href="https://fonts.googleapis.com/css?family=Newsreader&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet">
-    <style>
-        #noadd, #max {
-            display: none;
-        }
-        body {
-            margin: 2%;
-            font-family: Inter;
-        }
-        li {
-            margin: 0;
-            float: left;
-            padding: 14px 16px;
-        }
-        .logo, .price, h1, #quantity {
-            font-family: Newsreader;
-            font-size: xx-large;
-        }
-        .logo a {
-            color: #426b1f;
-        }
-        .right {
-            float: right;
-            margin-left: 5%;
-        }
-        .button {
-            background-color: #426b1f;
-            border-radius: 8px;
-            color: white;
-            text-align: center;
-            cursor: pointer;
-            user-select: none;
-        }
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        #product li, p.alt {
-            margin-left: 1%;
-            margin-top: 3%;
-        }
-        li a, li p {
-            margin: 0;
-            display: block;
-            text-align: center;
-            text-decoration: none;
-            color: black;
-        }
-        section {
-            margin-top: 2%;
-        }
-        #product {
-            display: flex;
-            justify-content: center;
-        }
-        #product div {
-            width: 40%;
-            margin: 0 5%;
-        }
-        @media only screen and (max-width: 900px) {
-            #product {
-                flex-direction: column;
-            }
-            #product div {
-                width: 100%;
-                margin: 0;
-            }
-        }
-        h2, #empty, #quantity {
-            text-align: center;
-        }
-        img {
-            width: 100%;
-            border: 5px solid #426b1f;
-            border-radius: 10px;
-        }
-        .image {
-            position: relative;
-        }
-        #soldout {
-            position: absolute;
-            display: inline;
-            background-color: red;
-            font-size: 50px;
-            text-align: center;
-            color: white;
-            width: 100%;
-            left: 0;
-            top: 50%;
-            transform: rotate(-20deg);
-        }
-        .review {
-            margin: 3% 0;
-        }
-        .review h3, .review span {
-            display: inline;
-        }
-        .review span {
-            margin-left: 10px;
-        }
-        #max {
-            color: red;
-        }
-        #quantity {
-            width: 5%;
-        }
-        h2 {
-            font-family: Newsreader;
-            margin: 0;
-        }
-        #noadd {
-            background-color: black;
-        }
-    </style>
     <link rel="stylesheet" href="product.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <!-- Navbar -->
@@ -182,89 +66,60 @@
             <li><a href="Checkout.php">Check Out</a></li>
             <li><a href="profile_page.php">My Profile</a></li>
             <li><a href="cart.php">Cart</a></li>
-            <li><a href="logout-handler.php" class="btn">Sign Out</a></li>
+            <li class="button"><a href="logout-handler.php">Sign Out</a></li>
         </ul>
     </nav>
-    <!--<header>
-        <h1><?php echo $conn->query($info)->fetch_assoc()["name"]; ?></h1>
-        <p><?php
-            if ($r_num) {
-                echo $avg."/5 (".$r_num." review";
-                if ($r_num > 1)
-                    echo "s";
-                echo ")";
-            }
-            else
-                echo "Not yet rated";
-        ?></p>
-    </header>-->
     <section id="product">
-        <div class="image">
+        <div id="image">
             <img src="<?php echo $conn->query($img)->fetch_assoc()["file_path"]; ?>" alt="A close-up view of the shoe">
             <span id="soldout">SOLD OUT</span>
         </div>
-        <div>
-        <!--
+        <div id="info">
+            <div id="name">
+                <h1><?php echo $conn->query($info)->fetch_assoc()["name"]; ?></h1>
+                <p><?php
+                    if ($r_num) {
+                        echo $avg."/5 (".$r_num." review";
+                        if ($r_num > 1)
+                            echo "s";
+                        echo ")";
+                    }
+                    else
+                        echo "Not yet rated";
+            ?></p>
+        </div>
+        <p id="price">PHP <?php echo $conn->query($info)->fetch_assoc()["price"]; ?></p>
         <ul>
-            <li class="wide button add">Add to Cart</li>
-            <li class="wide button noadd">Sold Out</li>
-            <li class="wide inv"><span class="sales"></span> sold, <span class="stock"></span> in stock</li>
-            <?php
-                for ($i = count($size)-1; $i >= 0; $i--)
-                    echo "<li class=\"wide button size right\">".$size[$i]."</li>";
-            ?>
-            <li class="wide right">Select a size</li>
-        </ul>-->
-        <h1><?php echo $conn->query($info)->fetch_assoc()["name"]; ?></h1>
-        <p><?php
-            if ($r_num) {
-                echo $avg."/5 (".$r_num." review";
-                if ($r_num > 1)
-                    echo "s";
-                echo ")";
-            }
-            else
-                echo "Not yet rated";
-        ?></p>
-        <p class="price">PHP <?php echo $conn->query($info)->fetch_assoc()["price"]; ?></p>
-        <ul class="alt">
             <li class="button" id="add">Add to Cart</li>
             <li class="button" id="noadd">Sold Out</li>
             <li class="inv"><span id="sales"></span> sold, <span id="stock"></span> in stock</li>
         </ul>
-        <p class="alt">Select a size</p>
-        <ul class="alt">
+        <p>Select a size</p>
+        <ul>
             <?php
                 for ($i = 0; $i < count($size); $i++)
                     echo "<li class=\"button size\">".$size[$i]."</li>";
             ?>
         </ul>
         <ul id="qtyselect">
-            <li>Quantity</li>
+            <li id="qtylabel">Quantity</li>
             <li id="quantity"></li>
             <li class="button quantity">+</li>
             <li class="button quantity">-</li>
-            <li id="max">Maximum limit reached</li>
         </ul>
+        <p id="max">Maximum limit reached</p>
     </section>
     <section id="reviews">
         <h2>Reviews</h2>
         <?php
             if (!$r_num)
                 echo "<p id=\"empty\">No reviews yet. Buy a pair or two and tell us what you think!</p>";
+            else {
+                while ($s = $review->fetch_array()) {
+                    echo "<div class=\"review\"><h3>".$s[0]."</h3><span>".$s[1]."</span><span class=\"right\">Rating: ".$s[2]."</span><p>".$s[3]."</p></div>";
+                }
+            }
         ?>
-        <!-- Dummy reviews; to be implemented as PHP -->
-        <div class="review">
-            <h3>Unusually Long User Name</h3>
-            <span>3/26/2025, Size: 8, Rating: 5</span>
-            <p>Although the Japanese had a completely different religious background (Buddhism and Shintoism), they were tolerant of Catholicism during their brief occupation of the Philippines. They were reluctant at first, but they eventually embraced Catholicism to avoid being perceived as an "enemy" by the Filipino people in spite of the numerous atrocities they have committed, though they would not take part in religious sacraments and masses. Instead, they used Catholic priests and nuns to introduce Japanese language and culture to the locals. They believed that religious beliefs would not disappear overnight, so their strategy was to let it gradually disappear over time along with Western cultural influences.</p>
-        </div>
-        <hr>
-        <div class="review">
-            <h3>User</h3>
-            <span>3/26/2025, Size: 8, Rating: 5</span>
-            <p>Although the Japanese had a completely different religious background (Buddhism and Shintoism), they were tolerant of Catholicism during their brief occupation of the Philippines. They were reluctant at first, but they eventually embraced Catholicism to avoid being perceived as an "enemy" by the Filipino people in spite of the numerous atrocities they have committed, though they would not take part in religious sacraments and masses. Instead, they used Catholic priests and nuns to introduce Japanese language and culture to the locals. They believed that religious beliefs would not disappear overnight, so their strategy was to let it gradually disappear over time along with Western cultural influences.</p>
-        </div>
     </section>
     <script>
         let selected_size = 0;
@@ -275,12 +130,12 @@
             for ($i = 0; $i < count($size); $i++)
                 echo $sales[$i].",";
         ?>null];
-        const stock = [0,<?php
+        const stock = [1,<?php
             for ($i = 0; $i < count($size); $i++)
                 echo $stock[$i].",";
         ?>null];
 
-        // DOM
+        // DOM objects
         const a = document.getElementById("add");
         const i = document.getElementById("sales");
         const i1 = document.getElementById("stock");
@@ -311,13 +166,13 @@
                 q[1].style.display = "";
             }
             if (qty == stock[selected_size]) {
-                m.style.display = "block";
+                m.style.visibility = "visible";
                 q[0].style.display = "none";
             }
         });
         q[1].addEventListener("click", function() {
             qty--;
-            m.style.display = "";
+            m.style.visibility = "";
             if (qty >= 1) {
                 qd.innerHTML = qty;
                 q[0].style.display = "";
@@ -330,7 +185,7 @@
             selected_size = size;
             qty = 1;
             qd.innerHTML = qty;
-            m.style.display = "";
+            m.style.visibility = "";
 
             i.innerHTML = sales[size];
             i1.innerHTML = stock[size];
@@ -347,6 +202,13 @@
                 a.style.display = "";
                 n.style.display = "";
                 q[1].style.display = "none";
+
+                if (stock[size] == 1) {
+                    m.style.visibility = "visible";
+                    q[0].style.display = "none";
+                }
+                else
+                    q[0].style.display = "";
             }
 
             for (let j = 0; j < s_len; j++) {
