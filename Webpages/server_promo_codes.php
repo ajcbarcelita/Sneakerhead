@@ -74,12 +74,24 @@
                 <button class="sign-in" onclick="window.location.href='logout-handler.php'">Sign Out</button> <!-- Updated button -->
             </nav>
     </header>
+    <?php
+        // Display success message
+        if (isset($_SESSION['success'])) {
+            echo "<div class='success-message'>" . htmlspecialchars($_SESSION['success']) . "</div>";
+            unset($_SESSION['success']); // Clear the message after displaying it
+        }
+
+        // Display error message
+        if (isset($_SESSION['error'])) {
+            echo "<div class='error-message'>" . htmlspecialchars($_SESSION['error']) . "</div>";
+            unset($_SESSION['error']); // Clear the message after displaying it
+        }
+    ?>
 
     <!-- Will define 3 sections in this page: Add Promo Codes, Modify Promo Codes, (Soft) Delete Promo Codes -->
      <section class="admin-panel">
         <!-- Add Promo Codes -->
         <div class="form-container">
-            TODO: Add Promo Codes Backend, While Also Checking For Existing Promo Codes, and Displayung Error Messages Using Sessions
             <h2>ADD PROMO CODES</h2>
             <form action="BackEnd/add_promo_code.php" method="post">
                 <!-- Promo Code -->
