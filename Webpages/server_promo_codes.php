@@ -57,6 +57,23 @@
 
             return true; // Allow form submission
         }
+
+        function confirmUpdatePromoCode() {
+            const promoCode = document.getElementById('update_promo_code_select').value;
+
+            if (!promoCode) {
+                alert('Please select a promo code to update.');
+                return false; // Prevent form submission
+            }
+
+            const confirmUpdate = confirm(`Are you sure you want to update the promo code "${promoCode}"?`);
+            if (!confirmUpdate) {
+                alert('Update canceled.');
+                return false; // Prevent form submission
+            }
+
+            return true; // Allow form submission
+        }
 </script>
 </head>
 <body>
@@ -155,7 +172,7 @@
         <div class="form-container">
         TODO: Update Promo Codes Backend, Displaying Error Messages Using Sessions, Adding a Confirmation Dialog
             <h2>UPDATE PROMO CODES</h2>
-            <form action="BackEnd/update_promo_code.php" method="post">
+            <form action="BackEnd/update_promo_code.php" method="post" onsubmit="return confirmUpdatePromoCode();">
                 <!-- Select Promo Code -->
                 <div class="input-group">
                     <label for="update_promo_code_select">Select Promo Code:</label>
