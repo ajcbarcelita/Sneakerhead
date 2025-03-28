@@ -1,3 +1,11 @@
+<?php
+    session_start();
+    if (!isset( $_SESSION["role_id"]) || $_SESSION["role_id"] != 1) {
+        header("Location: login.php");
+        exit();
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,7 +21,7 @@
         <h1>SNEAKERHEADS (Server Side)</h1>
         <nav>
             <a href="server_product.php">Products</a>
-            <a href="#">Promo Codes</a>
+            <a href="server_promo_codes.php">Promo Codes</a>
             <a href="#">Reports</a>
             <button class="sign-in">Sign Out</button>
         </nav>
