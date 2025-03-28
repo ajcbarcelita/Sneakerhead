@@ -170,7 +170,6 @@
 
         <!-- Modify Promo Codes -->
         <div class="form-container">
-        TODO: Update Promo Codes Backend, Displaying Error Messages Using Sessions, Adding a Confirmation Dialog
             <h2>UPDATE PROMO CODES</h2>
             <form action="BackEnd/update_promo_code.php" method="post" onsubmit="return confirmUpdatePromoCode();">
                 <!-- Select Promo Code -->
