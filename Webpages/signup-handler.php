@@ -129,11 +129,13 @@
         } else {
             $_SESSION["error"] = "Error: Unable to register user.";
             header("Location: signup.php");
+            $conn->close();
             exit();
         }
 
     } else {
         header("Location: signup.php");
+        $conn->close();
         exit();
     }
 ?>

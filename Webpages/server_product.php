@@ -1,6 +1,12 @@
 <?php
-require "db_conn.php";
-require "BackEnd/sql_queries.php"; // Include the new file containing SQL scripts
+    session_start();
+    if (!isset( $_SESSION["role_id"]) || $_SESSION["role_id"] != 1) {
+        header("Location: login.php");
+        exit();
+    }
+
+    require "db_conn.php";
+    require "BackEnd/sql_queries.php"; // Include the new file containing SQL scripts
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +42,7 @@ require "BackEnd/sql_queries.php"; // Include the new file containing SQL script
         <h1>SNEAKERHEADS (Server Side)</h1>
         <nav>
             <a href="#">Products</a>
-            <a href="#">Promo Codes</a>
+            <a href="server_promo_codes.php">Promo Codes</a>
             <a href="show_reports.php">Reports</a>
             <button class="sign-in" onclick="window.location.href='logout-handler.php'">Sign Out</button> <!-- Updated button -->
         </nav>
