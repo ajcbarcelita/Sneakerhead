@@ -41,25 +41,21 @@
                 });
         }
 
-        function softDeletePromoCode() {
-            // Get the selected promo code from the dropdown
+        function confirmDeletePromoCode() {
             const promoCode = document.getElementById('delete_promo_code_select').value;
 
-            // Check if a promo code is selected
             if (!promoCode) {
                 alert('Please select a promo code to delete.');
-                return;
+                return false; // Prevent form submission
             }
 
-            // Confirm deletion
             const confirmDelete = confirm(`Are you sure you want to delete the promo code "${promoCode}"?`);
             if (!confirmDelete) {
                 alert('Deletion canceled.');
-                return;
+                return false; // Prevent form submission
             }
 
-            // Redirect to the backend PHP file for deletion
-            window.location.href = `BackEnd/soft_delete_promo_code.php?promo_code=${encodeURIComponent(promoCode)}`;
+            return true; // Allow form submission
         }
 </script>
 </head>
@@ -137,9 +133,8 @@
 
         <!-- Soft Delete Promo Codes -->
         <div class="form-container">
-        TODO: SoftDel Promo Codes Backend, Displaying Error Messages Using Sessions, Adding a Confirmation Dialog
             <h2>(SOFT) DELETE PROMO CODES</h2>
-            <form onsubmit="event.preventDefault(); softDeletePromoCode();"> <!-- Prevent the form from submitting directly by confirming action first -->
+            <form action="BackEnd/soft_delete_promo_code.php" method="post" onsubmit="return confirmDeletePromoCode();">
                 <div class="input-group">
                     <label for="delete_promo_code_select">Select Promo Code:</label>
                     <select name="promo_code" id="delete_promo_code_select" required>
