@@ -19,8 +19,13 @@
             return "Discount value must be between 0 and 100 for Percentage type.";
         }
 
-        if ($discount_type === "Fixed" && $discount_value > $min_purchase) {
-            return "Discount value cannot exceed the minimum purchase amount for Fixed type.";
+        if ($discount_type === "Fixed") {
+            if ($min_purchase > 0 && $discount_value > $min_purchase) {
+                return "Discount value cannot exceed the minimum purchase amount for Fixed type.";
+            }
+            if ($discount_value <= 0) {
+                return "Discount value must be greater than 0 for Fixed type.";
+            }
         }
 
         return null; // No validation errors

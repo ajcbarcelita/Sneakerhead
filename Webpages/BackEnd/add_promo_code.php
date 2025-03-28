@@ -19,13 +19,20 @@
             return "Discount value must be between 0 and 100 for Percentage type.";
         }
 
-        if ($discount_type === "Fixed" && $discount_value > $min_purchase) {
-            return "Discount value cannot exceed the minimum purchase amount for Fixed type.";
+        if ($discount_type === "Fixed") {
+            // If minimum value is greater than 0, check if the discount value is greater than the minimum purchase amount
+            if ($min_purchase > 0 && $discount_value > $min_purchase) {
+                return "Discount value cannot exceed the minimum purchase amount for Fixed type.";
+            }
+
+            // Case for when minimum purchase is 0
+            if ($discount_value <= 0) {
+                return "Discount value must be greater than 0 for Fixed type.";
+            }
         }
 
         return null; // No validation errors
     }
-    
     function redirectWithMessage($type, $message, $location = "../server_promo_codes.php") {
         $_SESSION[$type] = $message;
         header("Location: $location");
