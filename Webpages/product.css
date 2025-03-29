@@ -1,5 +1,5 @@
 body {
-    margin: 1% 3%;
+    padding: 1% 3%;
     font-family: Inter;
 }
 
@@ -43,12 +43,19 @@ body {
     visibility: hidden;
 }
 
-li {
+/* Standard border radius for rounded corners */
+img, .button, textarea {
+    border-radius: 8px;
+}
+
+li, .button {
     margin: 0;
-    float: left;
     padding: 14px 16px;
 }
 
+li {
+    float: left;
+}
 
 .logo, h1, #quantity {
     margin: 0;
@@ -63,7 +70,6 @@ li {
 }
 .button {
     background-color: #2f4f2f;
-    border-radius: 8px;
     color: white;
     text-align: center;
     cursor: pointer;
@@ -76,8 +82,8 @@ ul {
     padding: 0;
     overflow: hidden;
 }
-#product li {
-    margin-right: 1%;
+#product li, #write li {
+    margin-right: 10px;
     margin-bottom: 3%;
 }
 li a, li p {
@@ -99,10 +105,12 @@ section {
     margin: 0 5%;
 }
 .review h3, .review span, #name * {
-    display: inline;
     margin-right: 10px;
 }
-@media only screen and (max-width: 900px) {
+.review h3, .review span, #review *, #name * {
+    display: inline;
+}
+@media only screen and (max-width: 950px) {
     #product, .navbar {
         flex-direction: column;
     }
@@ -111,18 +119,19 @@ section {
         margin: 0;
     }
     .nav-links {
-        margin-top: 1%;
+        margin-top: 3%;
+        font-size: 2vw;
     }
     #name {
         margin-top: 3%;
     }
-    .right {
+    #review li {
         float: none;
     }
-    .review h3 {
+    .review h3, #review * {
         display: block;
     }
-    h2, #empty {
+    h2, #empty, #write p {
         text-align: center;
     }
 }
@@ -176,4 +185,12 @@ h2, #price {
 }
 #qtylabel {
     padding-left: 0;
+}
+textarea {
+    width: 100%;
+    height: 100px;
+    resize: none;
+    font-family: Inter;
+    padding: 1%;
+    margin: 1% -1%;
 }

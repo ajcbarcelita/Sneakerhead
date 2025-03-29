@@ -16,10 +16,16 @@
     if (!$conn->query("SELECT * FROM shoes WHERE id='".$id."'")->num_rows)
         $id = 1;
 
-    if ($user)
+    if ($user) {
         $cart = $conn->query("SELECT cart_id FROM shopping_cart WHERE user_id='".$user."'")->fetch_array()[0];
-    else
+        $name = $conn->query("SELECT CONCAT(fname, ' ', lname) FROM users WHERE id='".$user."'")->fetch_array()[0];
+        $check = $conn->query("SELECT * FROM shoe_reviews WHERE user_id='".$user."' AND shoe_id='".$id."'")->fetch_array();
+        $buy = $conn->query("SELECT COUNT(*) FROM orders JOIN order_items ON orders.order_id = order_items.order_id WHERE orders.user_id='".$user."' AND order_items.shoe_id='".$id."'")->fetch_array()[0];
+    }
+    else {
+        $user = 0;
         $cart = 0;
+    }
 
     $shoe = $conn->query("SELECT shoes.name, shoes.price, shoe_images.file_path FROM shoes JOIN shoe_images ON shoes.id = shoe_images.shoe_id WHERE shoes.id = '".$id."' AND shoes.is_deleted = '0'")->fetch_array();
     $r_stat = $conn->query("SELECT FORMAT(AVG(rating), 1), COUNT(*) FROM shoe_reviews WHERE shoe_id='".$id."'")->fetch_array();
@@ -29,7 +35,6 @@
     $size = array();
     $sales = array();
     $stock = array();
-
 
     while ($s = $inv->fetch_array()) {
         $size[] = $s[0];
@@ -79,7 +84,7 @@
                 <h1><?php echo $shoe[0]; ?></h1>
                 <p><?php
                     if ($r_stat[1]) {
-                        echo $r_stat[0]."/5 (".$r_stat[1]." review";
+                        echo $r_stat[0]."/5 (".$r_stat[1]." rating";
                         if ($r_stat[1] > 1)
                             echo "s";
                         echo ")";
@@ -110,6 +115,31 @@
         </ul>
         <p id="max">Maximum limit reached</p>
     </section>
+    <section id="write">
+        <h2>Rate and review</h2>
+        <?php
+            if ($user) {
+                if ($buy) {
+                    echo "<textarea id=\"text\" maxlength=\"500\" placeholder=\"Tell us what you think about this product in 500 characters or less (optional). Leave this blank if you want to ";
+                    if ($check)
+                        echo "change your rating and/or remove your review";
+                    else
+                        echo "rate without reviewing";
+                    echo ".\"></textarea><ul><li>Select a rating</li>";
+                    for ($i = 1; $i <= 5; $i++)
+                        echo "<li class=\"button rating\">".$i."</li>";
+                    echo "</ul><ul id=\"review\"><li>Reviewing as ".$name.".";
+                    if ($check)
+                        echo " Your existing review for this product will be overwritten.";
+                    echo "</li><li class=\"button right\" id=\"submit\">Submit</li></ul>";
+                }
+                else
+                    echo "<p>You haven't bought this product yet. You may return to this page to rate and review after checking out.</p>";
+            }
+            else
+                echo "<p>Already bought this product? Sign in to rate and review.</p>";
+        ?>
+    </section>
     <section id="reviews">
         <h2>Reviews</h2>
         <?php
@@ -123,11 +153,13 @@
         ?>
     </section>
     <script>
-        let selected_size = 0;
-        let qty = 1;
-
         // Dynamically set values
+        const user = <?php echo $user; ?>;
+        const name = "<?php echo $name; ?>";
         const cart = [<?php echo $cart.",".$id.",".$shoe[1]; ?>];
+        const buy = <?php
+            echo $buy;
+        ?>;
         const sales = [<?php
             for ($i = 0; $i < count($size); $i++)
                 echo $sales[$i].",";
@@ -152,9 +184,18 @@
         const q = document.getElementsByClassName("quantity");
         const qd = document.getElementById("quantity");
         const qs = document.getElementById("qtyselect");
+        const r = document.getElementsByClassName("rating");
+        const sr = document.getElementById("submit");
+        const t = document.getElementById("text");
         const s_len = s.length;
 
+        // AJAX
         const xhttp = new XMLHttpRequest();
+
+        // Variables
+        let selected_size = 0;
+        let qty = 1;
+        let rating = 4;
 
         // Event listeners
         a.addEventListener("click", function() {
@@ -167,13 +208,12 @@
                         n[1].style.display = "block";
                     }
                     else {
-                        alert("Can't add this item to your cart due to a server error!");
+                        alert("Can't add this item to your cart due to an error!");
                     }
                 }
                 xhttp.open("POST", "add-to-cart.php");
                 xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 xhttp.send("cart=" + cart[0] + "&shoe=" + cart[1] + "&size=" + sizes[selected_size] + "&qty=" + qty + "&price=" + cart[2]);
-
             }
         });
 
@@ -204,6 +244,41 @@
             if (qty == 1)
                 q[1].style.display = "none";
         });
+
+        if (buy) {
+            for (let j = 0; j < 5; j++) {
+                r[j].addEventListener("click", function() {
+                    rating = j;
+                    btnSelect(r, j);
+                });
+            }
+
+            sr.addEventListener("click", function() {
+                if (!cart[0])
+                    window.location.href = "login.php";
+                else {
+                    xhttp.onload = function() {
+                        if (this.responseText == "OK")
+                            location.reload();
+                        else {
+                            alert("Can't add your review due to an error! " + this.responseText);
+                        }
+                    }
+                    xhttp.open("POST", "add-review.php");
+                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhttp.send("user=" + user + "&shoe=" + cart[1] + "&rating=" + (rating + 1) + "&text=" + t.value);
+                }
+            });
+        }
+
+        function btnSelect(btn, val) {
+            for (let j = 0; j < btn.length; j++) {
+                if (j == val)
+                    btn[j].style.backgroundColor = "black";
+                else
+                    btn[j].style.backgroundColor = "";
+            }
+        }
 
         function setSize(size) {
             selected_size = size;
@@ -236,15 +311,11 @@
                     q[0].style.display = "";
             }
 
-            for (let j = 0; j < s_len; j++) {
-                if (j == size)
-                    s[j].style.backgroundColor = "black";
-                else
-                    s[j].style.backgroundColor = "";
-            }
+            btnSelect(s, size);
         }
 
         setSize(0);
+        btnSelect(r, rating);
     </script>
 </body>
 </html>
