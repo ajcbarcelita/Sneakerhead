@@ -43,6 +43,13 @@ nav a {
     margin-bottom: 20px;
 }
 
+.product-list {
+    background: lightgray; /* Match the background color of other sections */
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px; /* Optional: Add rounded corners for consistency */
+}
+
 form {
     display: flex;
     flex-direction: column;
@@ -149,6 +156,24 @@ button {
     width: calc(70% - 10px); /* Adjust width to fit next to label */
     padding: 10px;
     box-sizing: border-box;
+}
+
+.input-group input#current_stock {
+    width: 60px; /* Set a fixed width for the input */
+    text-align: center; /* Center-align the text */
+    margin: 0 10px; /* Add space between the input and buttons */
+}
+
+.input-group button {
+    height: calc(1.5em + 10px); /* Match label font size plus padding */
+    padding: 5px 10px; /* Add padding for better appearance */
+    font-size: 1em; /* Ensure font size matches */
+    line-height: 1.5em; /* Align text vertically */
+    margin: 0 5px; /* Add spacing between buttons */
+}
+
+.input-group span#current_stock {
+    margin: 0 10px; /* Add space between the number and buttons */
 }
 
 .product-image {

@@ -172,19 +172,6 @@
                     <input type="text" name="brand_name" placeholder="Brand Name">
                 </div>
                 <div class="input-group">
-                    <label for="shoe_size">Shoe Size: </label> <!-- Added space after colon -->
-                    <select name="shoe_size" class="full-width">
-                        <option value="" disabled selected>Select Size</option> <!-- Default null option -->
-                        <?php foreach ($sizes as $size): ?>
-                            <option value="<?= $size ?>"><?= $size ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="shoe_count">Shoe Count: </label> <!-- Added space after colon -->
-                    <input type="number" name="shoe_count" placeholder="Shoe Count" min="0" oninput="validity.valid||(value='');">
-                </div>
-                <div class="input-group">
                     <label for="price">Price(₱): </label> <!-- Added space after colon -->
                     <input type="number" step="0.01" name="price" placeholder="Price(₱)" min="0" oninput="validity.valid||(value='');">
                 </div>
@@ -195,6 +182,70 @@
                 <button type="submit">Update</button>
             </form>
         </div>
+
+        <div class="form-container">
+            <h2>UPDATE SHOE STOCK</h2>
+            <form class="update-stock-form" action="BackEnd/update_shoe_stock.php" method="post">
+                <div class="input-group">
+                    <label for="id">Product ID: </label>
+                    <select name="id" id="product_id" required onchange="fetchShoeStock()">
+                        <option value="" disabled selected>Select Product ID</option>
+                        <?php foreach ($products as $product): ?>
+                            <option value="<?= $product['id'] ?>"><?= $product['id'] ?> - <?= $product['name'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="shoe_size">Shoe Size: </label>
+                    <select name="shoe_size" id="shoe_size" class="full-width" required onchange="fetchShoeStock()">
+                        <option value="" disabled selected>Select Size</option> <!-- Default null option -->
+                        <?php foreach ($sizes as $size): ?>
+                            <option value="<?= $size ?>"><?= $size ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="current_stock">Stock: </label>
+                    <button type="button" onclick="adjustStock(-1)">-</button>
+                    <input type="number" id="current_stock" name="current_stock" value="0" min="0" oninput="updateHiddenStock()" />
+                    <button type="button" onclick="adjustStock(1)">+</button>
+                </div>
+                <input type="hidden" name="shoe_count" id="shoe_count" value="0">
+                <button type="submit">Update Stock</button>
+            </form>
+        </div>
+        <script>
+            function fetchShoeStock() {
+                const productId = document.getElementById('product_id').value;
+                const shoeSize = document.getElementById('shoe_size').value;
+
+                if (productId && shoeSize) {
+                    fetch(`BackEnd/fetch_shoe_stock.php?product_id=${productId}&shoe_size=${shoeSize}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            const stock = data.stock || 0;
+                            document.getElementById('current_stock').value = stock;
+                            document.getElementById('shoe_count').value = stock;
+                        });
+                }
+            }
+
+            function adjustStock(amount) {
+                const currentStockElement = document.getElementById('current_stock');
+                const shoeCountInput = document.getElementById('shoe_count');
+                let currentStock = parseInt(currentStockElement.value);
+
+                currentStock = Math.max(0, currentStock + amount); // Prevent negative stock
+                currentStockElement.value = currentStock;
+                shoeCountInput.value = currentStock;
+            }
+
+            function updateHiddenStock() {
+                const currentStockElement = document.getElementById('current_stock');
+                const shoeCountInput = document.getElementById('shoe_count');
+                shoeCountInput.value = currentStockElement.value;
+            }
+        </script>
     </section>
 
 </body>
