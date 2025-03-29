@@ -92,6 +92,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         error_log("Order items copied successfully for Order ID: $order_id");
 
+        // Decrement shoe size inventory
+        $cart_items_query = "SELECT shoe_id, shoe_us_size, quantity FROM shopping_cart_items WHERE cart_id = ?";
+        $stmt = $conn->prepare($cart_items_query);
+        if (!$stmt) {
+            throw new Exception("Prepare failed for cart_items_query: " . $conn->error);
+        }
+        $stmt->bind_param("i", $cart_id);
+        $stmt->execute();
+        $cart_items_result = $stmt->get_result();
+
+        if ($cart_items_result->num_rows > 0) {
+            while ($item = $cart_items_result->fetch_assoc()) {
+                $shoe_id = $item['shoe_id'];
+                $shoe_size = $item['shoe_us_size'];
+                $quantity = $item['quantity'];
+
+                $update_inventory_query = "UPDATE shoe_size_inventory 
+                                           SET stock = stock - ? 
+                                           WHERE shoe_id = ? AND shoe_us_size = ?";
+                $stmt_update = $conn->prepare($update_inventory_query);
+                if (!$stmt_update) {
+                    throw new Exception("Prepare failed for update_inventory_query: " . $conn->error);
+                }
+                $stmt_update->bind_param("iis", $quantity, $shoe_id, $shoe_size);
+                if (!$stmt_update->execute()) {
+                    throw new Exception("Execute failed for update_inventory_query: " . $stmt_update->error);
+                }
+            }
+            error_log("Shoe size inventory updated successfully.");
+        }
+
         // Clear shopping cart
         $clear_cart_query = "DELETE FROM shopping_cart_items WHERE cart_id = ?";
         $stmt = $conn->prepare($clear_cart_query);
