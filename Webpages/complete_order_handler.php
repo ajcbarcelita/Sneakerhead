@@ -64,17 +64,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->begin_transaction();
 
     try {
-        // Insert order details
-        $order_query = "INSERT INTO orders (user_id, total_price, created_at, promo_code) VALUES (?, ?, NOW(), ?)"; // Matches SQL schema
+        // Calculate the lowest available order_id
+        $min_order_id_query = "SELECT MIN(t1.order_id + 1) AS next_order_id
+                               FROM orders t1
+                               LEFT JOIN orders t2 ON t1.order_id + 1 = t2.order_id
+                               WHERE t2.order_id IS NULL";
+        $result = $conn->query($min_order_id_query);
+        if (!$result) {
+            throw new Exception("Failed to calculate next order_id: " . $conn->error);
+        }
+        $row = $result->fetch_assoc();
+        $next_order_id = $row['next_order_id'] ?? 1; // Default to 1 if no orders exist
+
+        // Insert order details with the calculated order_id
+        $order_query = "INSERT INTO orders (order_id, user_id, total_price, created_at, promo_code) VALUES (?, ?, ?, NOW(), ?)";
         $stmt = $conn->prepare($order_query);
         if (!$stmt) {
             throw new Exception("Prepare failed for order_query: " . $conn->error);
         }
-        $stmt->bind_param("ids", $user_id, $total_amount, $promo_code); // total_amount maps to total_price
+        $stmt->bind_param("iids", $next_order_id, $user_id, $total_amount, $promo_code);
         if (!$stmt->execute()) {
             throw new Exception("Execute failed for order_query: " . $stmt->error);
         }
-        $order_id = $stmt->insert_id;
+        $order_id = $next_order_id;
+
         error_log("Order created successfully. Order ID: $order_id");
 
         // Copy cart items to order items
