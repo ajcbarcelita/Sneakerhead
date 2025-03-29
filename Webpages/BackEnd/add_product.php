@@ -1,4 +1,5 @@
 <?php
+session_start();
 require '../db_conn.php'; // Updated file path
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -11,13 +12,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validate price and shoe count
     if ($price < 0 || $shoe_count < 0) {
-        die("Price and Shoe Count cannot be negative.");
+        $_SESSION['error'] = "Price and Shoe Count cannot be negative.";
+        header("Location: ../server_product.php");
+        exit();
     }
 
     // Check if the file is a valid JPEG or JPG
     $allowed_types = ['image/jpeg', 'image/jpg'];
     if (!in_array($shoe_image['type'], $allowed_types)) {
-        die("Only JPEG and JPG files are allowed.");
+        $_SESSION['error'] = "Only JPEG and JPG files are allowed.";
+        header("Location: ../server_product.php");
+        exit();
     }
 
     // Ensure the target directory exists
@@ -30,7 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $formatted_name = strtolower(str_replace(' ', '_', $shoe_name));
     $target_file = $target_dir . $formatted_name . '.jpg';
     if (!move_uploaded_file($shoe_image['tmp_name'], $target_file)) {
-        die("Failed to upload file.");
+        $_SESSION['error'] = "Failed to upload file.";
+        header("Location: ../server_product.php");
+        exit();
     }
 
     // Insert product into the database
@@ -44,11 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql_inventory = "INSERT INTO shoe_size_inventory (shoe_id, shoe_us_size, stock) VALUES ($shoe_id, $shoe_size, $shoe_count)";
         $conn->query($sql_inventory);
 
-        // Redirect to Server_Products.php
+        $_SESSION['success'] = "Product added successfully!";
         header("Location: ../server_product.php");
         exit();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        $_SESSION['error'] = "Failed to add product. Please try again.";
+        header("Location: ../server_product.php");
+        exit();
     }
 }
 

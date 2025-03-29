@@ -48,6 +48,20 @@
         </nav>
     </header>
 
+    <?php
+        // Display success message
+        if (isset($_SESSION['success'])) {
+            echo "<div class='success-message'>" . htmlspecialchars($_SESSION['success']) . "</div>";
+            unset($_SESSION['success']); // Clear the message after displaying it
+        }
+
+        // Display error message
+        if (isset($_SESSION['error'])) {
+            echo "<div class='error-message'>" . htmlspecialchars($_SESSION['error']) . "</div>";
+            unset($_SESSION['error']); // Clear the message after displaying it
+        }
+    ?>
+
     <section class="admin-panel">
         <div class="form-container">
             <h2>ADD PRODUCT</h2>

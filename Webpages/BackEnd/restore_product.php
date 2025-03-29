@@ -1,19 +1,23 @@
 <?php
-require '../db_conn.php';
+session_start();
+require '../db_conn.php'; // Updated file path
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id = intval($_POST['id']); // Ensure $id is an integer
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $id = $_POST['id'];
 
-    // Update the is_deleted flag to 0 (restore the product)
-    $sql = "UPDATE shoes SET is_deleted = 0 WHERE id = $id";
-    if ($conn->query($sql) === TRUE) {
-        // Redirect to server_product.php
-        header("Location: ../server_product.php");
-        exit();
+    $sql = "UPDATE shoes SET is_deleted = 0 WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+
+    if ($stmt->execute()) {
+        $_SESSION['success'] = "Product restored successfully!";
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        $_SESSION['error'] = "Failed to restore product. Please try again.";
     }
+
+    $stmt->close();
 }
 
 $conn->close();
-?>
+header("Location: ../server_product.php"); // Updated file path
+exit();

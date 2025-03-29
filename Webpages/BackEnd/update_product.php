@@ -1,4 +1,5 @@
 <?php
+session_start();
 require "../db_conn.php";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -12,8 +13,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Validate inputs
     if (($shoe_count !== null && $shoe_count !== '' && $shoe_count < 0) || ($price !== null && $price !== '' && $price < 0)) {
-        die("Shoe count and price must be non-negative.");
+        $_SESSION['error'] = "Shoe count and price must be non-negative.";
+        header("Location: ../server_product.php");
+        exit();
     }
+
+    $sql_execution_successful = true;
 
     // Update product details
     $sql = "UPDATE shoes SET ";
@@ -24,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($fields) {
         $sql .= implode(", ", $fields) . " WHERE id='$id'";
         if ($conn->query($sql) === FALSE) {
-            die("Error updating record: " . $conn->error);
+            $sql_execution_successful = false;
         }
     }
 
@@ -32,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($shoe_size !== null && $shoe_size !== '' && $shoe_count !== null && $shoe_count !== '') {
         $sql = "UPDATE shoe_size_inventory SET stock='$shoe_count' WHERE shoe_id='$id' AND shoe_us_size='$shoe_size'";
         if ($conn->query($sql) === FALSE) {
-            die("Error updating shoe size inventory: " . $conn->error);
+            $sql_execution_successful = false;
         }
     }
 
@@ -41,13 +46,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $target_dir = "../images/";
         $target_file = $target_dir . basename($shoe_image["name"]);
         if (!move_uploaded_file($shoe_image["tmp_name"], $target_file)) {
-            die("Error uploading file.");
+            $_SESSION['error'] = "Error uploading file.";
+            header("Location: ../server_product.php");
+            exit();
         }
 
         $sql = "UPDATE shoe_images SET file_path='$target_file' WHERE shoe_id='$id'";
         if ($conn->query($sql) === FALSE) {
-            die("Error updating image: " . $conn->error);
+            $sql_execution_successful = false;
         }
+    }
+
+    if ($sql_execution_successful) {
+        $_SESSION['success'] = "Product updated successfully!";
+    } else {
+        $_SESSION['error'] = "Failed to update product. Please try again.";
     }
 
     // Redirect back to Server_Products.php

@@ -1,4 +1,5 @@
 <?php
+session_start();
 require '../db_conn.php'; // Updated file path
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -9,9 +10,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "Product marked as deleted successfully.";
+        $_SESSION['success'] = "Product deleted successfully!";
     } else {
-        echo "Error: " . $stmt->error;
+        $_SESSION['error'] = "Failed to delete product. Please try again.";
     }
 
     $stmt->close();
