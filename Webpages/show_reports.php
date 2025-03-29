@@ -23,7 +23,9 @@
             <a href="server_product.php">Products</a>
             <a href="server_promo_codes.php">Promo Codes</a>
             <a href="#">Reports</a>
-            <button class="sign-in">Sign Out</button>
+            <form action="logout-handler.php" method="post" style="display:inline;">
+                <button type="submit" class="sign-in">Sign Out</button>
+            </form>
         </nav>
     </header>
 
