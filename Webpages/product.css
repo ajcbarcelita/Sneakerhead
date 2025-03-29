@@ -35,7 +35,7 @@ body {
 }
 
 /* Hidden by default, but can be revealed using JS */
-#noadd {
+.noadd {
     display: none;
 }
 
@@ -162,7 +162,7 @@ h2, .review {
 h2, #price {
     font-family: Newsreader;
 }
-#noadd {
+.noadd {
     background-color: black;
 }
 .button a {
