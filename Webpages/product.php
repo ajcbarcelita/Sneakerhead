@@ -1,4 +1,5 @@
 <?php
+    require 'db_conn.php';
     session_start();
     
     // Never display warnings in the page!
@@ -10,17 +11,6 @@
     // Use default value if ID is not specified in the URL
     if (!$id)
         $id = 1;
-
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "sneakerhead";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-      die("Connection failed: ".$conn->connect_error);
-    }
     
     // Use default value if ID is invalid or out-of-bounds
     if (!$conn->query("SELECT * FROM shoes WHERE id='".$id."'")->num_rows)

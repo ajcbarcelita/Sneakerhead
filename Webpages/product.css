@@ -122,11 +122,11 @@ section {
     .review h3 {
         display: block;
     }
-    h2 {
+    h2, #empty {
         text-align: center;
     }
 }
-#empty, #quantity {
+#quantity {
     text-align: center;
 }
 img {
@@ -150,8 +150,8 @@ img {
     top: 50%;
     transform: rotate(-20deg);
 }
-h2, .review {
-    margin-bottom: 50px;
+.review {
+    margin-top: 30px;
 }
 #max {
     color: red;
