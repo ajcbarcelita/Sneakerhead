@@ -130,9 +130,10 @@ $conn->close();
         <!-- Other Panels -->
         <nav>
             <a href="index.php">Home</a>
-            <a href="shop.php">Shop</a>
             <a href="Checkout.php">Check Out</a>
-            <button class="sign-out">Sign Out</button>
+            <a href="#">My Profile</a>
+            <a href="cart.php">Cart</a>
+            <button class="sign-out" onclick="window.location.href='logout-handler.php'">Sign Out</button>
         </nav>
     </header>
 
