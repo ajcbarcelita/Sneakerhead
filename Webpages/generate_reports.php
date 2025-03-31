@@ -79,7 +79,11 @@ function generateSalesReport($conn)
         SELECT 
             s.name AS product_name,
             SUM(oi.quantity) AS total_quantity_sold,
-            SUM(oi.subtotal) AS total_revenue
+            (
+                SELECT SUM(o.total_price)
+                FROM orders o
+                WHERE o.order_id = oi.order_id
+            )   AS total_revenue
         FROM 
             order_items oi
         JOIN 
