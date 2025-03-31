@@ -118,12 +118,11 @@
             // Display top-selling products
             echo '<h3>Top Selling Products</h3>';
             echo '<table>';
-            echo '<tr><th>Product Name</th><th>Total Quantity Sold</th><th>Total Revenue</th></tr>';
+            echo '<tr><th>Product Name</th><th>Total Quantity Sold</th></tr>';
             foreach ($salesXml->top_selling_products->product as $product) {
                 echo '<tr>';
                 echo '<td>' . $product->product_name . '</td>';
                 echo '<td>' . $product->total_quantity_sold . '</td>';
-                echo '<td>₱' . number_format((float)$product->total_revenue, 2) . '</td>';
                 echo '</tr>';
             }
             echo '</table>';
