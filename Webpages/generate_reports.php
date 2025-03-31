@@ -78,8 +78,7 @@ function generateSalesReport($conn)
     $top_selling_query = "
         SELECT 
             s.name AS product_name,
-            SUM(oi.quantity) AS total_quantity_sold,
-            SUM(oi.subtotal) AS total_revenue
+            SUM(oi.quantity) AS total_quantity_sold
         FROM 
             order_items oi
         JOIN 
@@ -120,7 +119,6 @@ function generateSalesReport($conn)
         $product = $top_selling->addChild('product');
         $product->addChild('product_name', htmlspecialchars($row['product_name']));
         $product->addChild('total_quantity_sold', $row['total_quantity_sold']);
-        $product->addChild('total_revenue', $row['total_revenue']);
     }
 
     // Add daily sales

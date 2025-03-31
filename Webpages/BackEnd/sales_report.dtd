@@ -7,10 +7,9 @@
 
 <!-- Top Selling Products Section -->
 <!ELEMENT top_selling_products (product+)>
-<!ELEMENT product (product_name, total_quantity_sold, total_revenue)>
+<!ELEMENT product (product_name, total_quantity_sold)>
 <!ELEMENT product_name (#PCDATA)>
 <!ELEMENT total_quantity_sold (#PCDATA)>
-<!ELEMENT total_revenue (#PCDATA)>
 
 <!-- Daily Sales Section -->
 <!ELEMENT daily_sales (sale+)>
