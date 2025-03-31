@@ -244,10 +244,10 @@ CREATE INDEX `fk_shopping_cart_items_2_idx` ON `sneakerhead`.`shopping_cart_item
 
 SHOW WARNINGS;
 
-INSERT INTO shopping_cart_items (`cart_id`, `shoe_id`, `shoe_us_size`, `quantity`, `price_at_addition`) VALUES
-(5, 1, 8.0, 1, 7395.00),
-(5, 2, 8.5, 1, 7395.00),
-(5, 6, 8.5, 2, 6800.00);
+-- INSERT INTO shopping_cart_items (`cart_id`, `shoe_id`, `shoe_us_size`, `quantity`, `price_at_addition`) VALUES
+-- (5, 1, 8.0, 1, 7395.00),
+-- (5, 2, 8.5, 1, 7395.00),
+-- (5, 6, 8.5, 2, 6800.00);
 
 -- -----------------------------------------------------
 -- Table `sneakerhead`.`promo_codes`
